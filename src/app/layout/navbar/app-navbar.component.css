@@ -1,0 +1,49 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(49, 53, 59, 0.08);
+  background: rgba(255, 253, 250, 0.92);
+  backdrop-filter: blur(12px);
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.navbar__course {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8d5a21;
+}
+
+.navbar__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1f2329;
+}
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.navbar__link {
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  color: #5f6670;
+  text-decoration: none;
+}
+
+.navbar__link:hover,
+.navbar__link--active {
+  color: #1f2329;
+  background: rgba(141, 90, 33, 0.12);
+}

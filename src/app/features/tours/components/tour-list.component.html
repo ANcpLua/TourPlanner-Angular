@@ -1,0 +1,40 @@
+@if (tours().length === 0) {
+  <div class="empty-state">
+    <h2>No tours yet</h2>
+    <p>Create the first tour to start working with the Angular client.</p>
+  </div>
+} @else {
+  <div class="tour-list">
+    @for (tour of tours(); track trackTour($index, tour)) {
+      <article
+        class="tour-card"
+        [class.tour-card--selected]="selectedTourId() === tour.id"
+      >
+        <button
+          type="button"
+          class="tour-card__body"
+          (click)="selectTour.emit(tour)"
+        >
+          <div class="tour-card__header">
+            <h2>{{ tour.name }}</h2>
+            <span>{{ tour.transportType }}</span>
+          </div>
+
+          <p class="tour-card__route">{{ tour.from }} → {{ tour.to }}</p>
+
+          <div class="tour-card__meta">
+            <span>Distance: {{ tour.distance ?? 0 | number: '1.0-0' }} m</span>
+            <span>Time: {{ tour.estimatedTime ?? 0 | number: '1.0-0' }} min</span>
+          </div>
+        </button>
+
+        <div class="tour-card__actions">
+          <button type="button" (click)="editTour.emit(tour)">Edit</button>
+          <button type="button" class="danger" (click)="deleteTour.emit(tour)">
+            Delete
+          </button>
+        </div>
+      </article>
+    }
+  </div>
+}

@@ -1,0 +1,86 @@
+.empty-state,
+.tour-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.empty-state {
+  padding: 1.5rem;
+  border: 1px dashed rgba(49, 53, 59, 0.2);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.empty-state h2,
+.tour-card__header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.empty-state p,
+.tour-card__route,
+.tour-card__meta {
+  margin: 0;
+  color: #5f6670;
+}
+
+.tour-card {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid rgba(49, 53, 59, 0.1);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 16px 30px -28px rgba(49, 53, 59, 0.42);
+}
+
+.tour-card--selected {
+  border-color: rgba(141, 90, 33, 0.4);
+  box-shadow: 0 22px 36px -28px rgba(141, 90, 33, 0.48);
+}
+
+.tour-card__body {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tour-card__header,
+.tour-card__meta,
+.tour-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.tour-card__header span {
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(141, 90, 33, 0.1);
+  color: #8d5a21;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.tour-card__meta {
+  flex-wrap: wrap;
+  font-size: 0.92rem;
+}
+
+.tour-card__actions button {
+  padding: 0.55rem 0.85rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: #20242b;
+  color: #fff;
+  cursor: pointer;
+}
+
+.tour-card__actions .danger {
+  background: #9c2f2f;
+}

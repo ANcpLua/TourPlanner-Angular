@@ -1,0 +1,91 @@
+<section class="tours-page">
+  <header class="tours-page__header">
+    <div>
+      <p class="tours-page__eyebrow">Feature</p>
+      <h1>Tours</h1>
+      <p class="tours-page__subtitle">
+        First vertical slice: load, create, edit and delete tours against the
+        C# backend.
+      </p>
+    </div>
+
+    <div class="tours-page__actions">
+      <button type="button" class="secondary" (click)="loadTours()">
+        Refresh
+      </button>
+      <button type="button" (click)="openCreateForm()">Add Tour</button>
+    </div>
+  </header>
+
+  @if (errorMessage()) {
+    <p class="tours-page__error">{{ errorMessage() }}</p>
+  }
+
+  <div class="tours-page__grid">
+    <section class="tours-page__panel">
+      @if (isLoading()) {
+        <p class="tours-page__state">Loading tours…</p>
+      } @else {
+        <app-tour-list
+          [tours]="tours()"
+          [selectedTourId]="selectedTourId()"
+          (selectTour)="selectTour($event)"
+          (editTour)="openEditForm($event)"
+          (deleteTour)="deleteTour($event)"
+        />
+      }
+    </section>
+
+    <section class="tours-page__panel tours-page__panel--detail">
+      @if (isFormVisible()) {
+        <app-tour-form
+          [tour]="editingTour()"
+          [submitting]="isSaving()"
+          (saveTour)="saveTour($event)"
+          (cancel)="closeForm()"
+        />
+      } @else if (selectedTour(); as tour) {
+        <article class="tour-detail">
+          <p class="tour-detail__eyebrow">Selected Tour</p>
+          <h2>{{ tour.name }}</h2>
+          <p class="tour-detail__description">{{ tour.description }}</p>
+
+          <dl class="tour-detail__facts">
+            <div>
+              <dt>Route</dt>
+              <dd>{{ tour.from }} → {{ tour.to }}</dd>
+            </div>
+            <div>
+              <dt>Transport</dt>
+              <dd>{{ tour.transportType }}</dd>
+            </div>
+            <div>
+              <dt>Distance</dt>
+              <dd>{{ tour.distance ?? 0 | number: '1.0-0' }} m</dd>
+            </div>
+            <div>
+              <dt>Estimated Time</dt>
+              <dd>{{ tour.estimatedTime ?? 0 | number: '1.0-0' }} min</dd>
+            </div>
+            <div>
+              <dt>Image Path</dt>
+              <dd>{{ tour.imagePath || 'None' }}</dd>
+            </div>
+          </dl>
+
+          <div class="tour-detail__actions">
+            <button type="button" (click)="openEditForm(tour)">Edit</button>
+            <button type="button" class="secondary" (click)="openCreateForm()">
+              New Tour
+            </button>
+          </div>
+        </article>
+      } @else {
+        <div class="tours-page__state">
+          <h2>No tour selected</h2>
+          <p>Choose a tour from the list or create a new one.</p>
+        </div>
+      }
+    </section>
+  </div>
+</section>

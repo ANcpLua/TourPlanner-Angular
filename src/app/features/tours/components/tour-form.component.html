@@ -1,0 +1,74 @@
+<form class="tour-form" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="tour-form__header">
+    <div>
+      <p class="tour-form__eyebrow">Tours</p>
+      <h2>{{ tour() ? 'Edit Tour' : 'Create Tour' }}</h2>
+    </div>
+  </div>
+
+  <label class="tour-form__field">
+    <span>Name</span>
+    <input type="text" formControlName="name" />
+    @if (showRequiredError('name')) {
+      <small>Name is required.</small>
+    }
+  </label>
+
+  <label class="tour-form__field">
+    <span>Description</span>
+    <textarea rows="4" formControlName="description"></textarea>
+    @if (showRequiredError('description')) {
+      <small>Description is required.</small>
+    }
+  </label>
+
+  <div class="tour-form__row">
+    <label class="tour-form__field">
+      <span>From</span>
+      <select formControlName="from">
+        <option value="">Select a city</option>
+        @for (city of cityOptions; track city) {
+          <option [value]="city">{{ city }}</option>
+        }
+      </select>
+      @if (showRequiredError('from')) {
+        <small>Start city is required.</small>
+      }
+    </label>
+
+    <label class="tour-form__field">
+      <span>To</span>
+      <select formControlName="to">
+        <option value="">Select a city</option>
+        @for (city of cityOptions; track city) {
+          <option [value]="city">{{ city }}</option>
+        }
+      </select>
+      @if (showRequiredError('to')) {
+        <small>Destination city is required.</small>
+      }
+    </label>
+  </div>
+
+  @if (form.hasError('identicalCities') && (form.dirty || form.touched)) {
+    <p class="tour-form__error">Start and destination must be different.</p>
+  }
+
+  <label class="tour-form__field">
+    <span>Transport Type</span>
+    <select formControlName="transportType">
+      @for (type of transportTypes; track type) {
+        <option [value]="type">{{ type }}</option>
+      }
+    </select>
+  </label>
+
+  <div class="tour-form__actions">
+    <button type="button" class="tour-form__secondary" (click)="cancel.emit()">
+      Cancel
+    </button>
+    <button type="submit" [disabled]="form.invalid || submitting()">
+      {{ submitting() ? 'Saving…' : 'Save Tour' }}
+    </button>
+  </div>
+</form>
