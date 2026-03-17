@@ -1,0 +1,34 @@
+coverage:
+  status:
+    project:
+      angular:
+        flags:
+          - angular
+        target: 95%
+      dotnet:
+        flags:
+          - dotnet
+        target: 90%
+    patch:
+      default:
+        target: auto
+
+flags:
+  angular:
+    paths:
+      - src/app/
+    carryforward: true
+  dotnet:
+    paths:
+      - API/
+      - BL/
+      - DAL/
+      - Contracts/
+    carryforward: true
+
+ignore:
+  - "src/app/app.config.ts"
+  - "src/app/app.routes.ts"
+  - "src/app/core/api/generated/**"
+  - "src/app/**/models/**"
+  - "src/app/features/tours/components/tour-map.component.ts"

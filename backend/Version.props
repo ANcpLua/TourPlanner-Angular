@@ -1,0 +1,64 @@
+<Project>
+
+    <PropertyGroup>
+        <!-- Autofac DI -->
+        <AutofacVersion>9.1.0</AutofacVersion>
+        <AutofacExtensionsDependencyInjectionVersion>10.0.0</AutofacExtensionsDependencyInjectionVersion>
+        <AutofacExtrasDynamicProxyVersion>7.1.0</AutofacExtrasDynamicProxyVersion>
+
+        <!-- EF Core 10 -->
+        <MicrosoftEntityFrameworkCoreVersion>10.0.5</MicrosoftEntityFrameworkCoreVersion>
+        <MicrosoftEntityFrameworkCoreDesignVersion>10.0.5</MicrosoftEntityFrameworkCoreDesignVersion>
+        <MicrosoftEntityFrameworkCoreInMemoryVersion>10.0.5</MicrosoftEntityFrameworkCoreInMemoryVersion>
+        <MicrosoftEntityFrameworkCoreRelationalVersion>10.0.5</MicrosoftEntityFrameworkCoreRelationalVersion>
+        <MicrosoftEntityFrameworkCoreToolsVersion>10.0.5</MicrosoftEntityFrameworkCoreToolsVersion>
+        <NpgsqlEntityFrameworkCorePostgreSQLVersion>10.0.1</NpgsqlEntityFrameworkCorePostgreSQLVersion>
+
+        <!-- ASP.NET Core 10 -->
+        <MicrosoftAspNetCoreIdentityEntityFrameworkCoreVersion>10.0.5</MicrosoftAspNetCoreIdentityEntityFrameworkCoreVersion>
+        <MicrosoftAspNetCoreOpenApiVersion>10.0.5</MicrosoftAspNetCoreOpenApiVersion>
+        <MicrosoftOpenApiVersion>2.7.1</MicrosoftOpenApiVersion>
+        <MicrosoftExtensionsApiDescriptionServerVersion>10.0.5</MicrosoftExtensionsApiDescriptionServerVersion>
+        <MicrosoftExtensionsConfigurationAbstractionsVersion>10.0.5</MicrosoftExtensionsConfigurationAbstractionsVersion>
+        <MicrosoftExtensionsHttpVersion>10.0.5</MicrosoftExtensionsHttpVersion>
+
+        <!-- Serilog -->
+        <SerilogVersion>4.3.1</SerilogVersion>
+        <SerilogAspNetCoreVersion>10.0.0</SerilogAspNetCoreVersion>
+        <SerilogExtensionsHostingVersion>10.0.0</SerilogExtensionsHostingVersion>
+        <SerilogExtensionsLoggingVersion>10.0.0</SerilogExtensionsLoggingVersion>
+        <SerilogSinksAsyncVersion>2.1.0</SerilogSinksAsyncVersion>
+        <SerilogSinksConsoleVersion>6.1.1</SerilogSinksConsoleVersion>
+        <SerilogSinksFileVersion>7.0.0</SerilogSinksFileVersion>
+
+        <!-- Mapping -->
+        <MapsterVersion>10.0.3</MapsterVersion>
+
+        <!-- PDF -->
+        <QuestPDFVersion>2026.2.4</QuestPDFVersion>
+
+        <!-- AOP / Fody -->
+        <FodyVersion>6.9.3</FodyVersion>
+        <MethodDecoratorFodyVersion>1.1.1</MethodDecoratorFodyVersion>
+
+        <!-- Image -->
+        <SixLaborsImageSharpVersion>3.1.12</SixLaborsImageSharpVersion>
+
+        <!-- Testing (MTP) -->
+        <CoverletMTPVersion>8.0.1</CoverletMTPVersion>
+        <MoqVersion>4.20.72</MoqVersion>
+        <NUnitVersion>4.5.1</NUnitVersion>
+        <NUnitAnalyzersVersion>4.12.0</NUnitAnalyzersVersion>
+        <NUnit3TestAdapterVersion>6.1.0</NUnit3TestAdapterVersion>
+
+        <!-- Integration Testing -->
+        <MicrosoftAspNetCoreMvcTestingVersion>10.0.5</MicrosoftAspNetCoreMvcTestingVersion>
+
+        <!-- HTTP Resilience -->
+        <MicrosoftExtensionsHttpResilienceVersion>10.4.0</MicrosoftExtensionsHttpResilienceVersion>
+
+        <!-- Code Quality -->
+        <ANcpLuaAnalyzersVersion>1.21.1</ANcpLuaAnalyzersVersion>
+    </PropertyGroup>
+
+</Project>

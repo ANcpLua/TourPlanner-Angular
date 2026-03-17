@@ -1,0 +1,35 @@
+using BL.Interfaces;
+using Contracts.Routes;
+using Microsoft.AspNetCore.Http.HttpResults;
+
+namespace API.Endpoints;
+
+public static class RouteEndpoints
+{
+    public static IEndpointRouteBuilder MapRouteEndpoints(this IEndpointRouteBuilder endpoints)
+    {
+        var routes = endpoints.MapGroup(ApiRoute.Routes.Path).WithTags(ApiTag.Routes);
+        routes.MapPost(ApiRoute.Routes.Resolve, ResolveRoute);
+        return endpoints;
+    }
+
+    internal static async Task<Ok<ResolveRouteResponse>> ResolveRoute(
+        ResolveRouteRequest request,
+        IRouteService routeService,
+        CancellationToken cancellationToken)
+    {
+        var route = await routeService.ResolveRouteAsync(
+            (request.FromLatitude, request.FromLongitude),
+            (request.ToLatitude, request.ToLongitude),
+            request.TransportType,
+            cancellationToken
+        );
+
+        return TypedResults.Ok(new ResolveRouteResponse
+        {
+            Distance = route.Distance,
+            Duration = route.Duration,
+            Geometry = route.Geometry
+        });
+    }
+}

@@ -1,0 +1,39 @@
+using System.Text.Json;
+using BL.DomainModel;
+using BL.Interfaces;
+
+namespace BL.Service;
+
+public class FileService(ITourService tourService, IPdfReportService pdfReportService) : IFileService
+{
+    private static readonly JsonSerializerOptions ImportJsonOptions = new(JsonSerializerDefaults.Web);
+
+    public byte[]? GenerateTourReport(Guid tourId)
+    {
+        var tour = tourService.GetTourById(tourId);
+        return tour is null ? null : pdfReportService.GenerateTourReport(tour);
+    }
+
+    public byte[] GenerateSummaryReport(IEnumerable<TourDomain> tours) =>
+        pdfReportService.GenerateSummaryReport(tours);
+
+    public TourDomain? ExportTourToJson(Guid tourId) =>
+        tourService.GetTourById(tourId);
+
+    public async Task<bool> ImportTourFromJsonAsync(string json, CancellationToken cancellationToken = default)
+    {
+        TourDomain? tour;
+        try
+        {
+            tour = JsonSerializer.Deserialize<TourDomain>(json, ImportJsonOptions);
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
+
+        if (tour is null) return false;
+        await tourService.CreateTourAsync(tour, cancellationToken);
+        return true;
+    }
+}

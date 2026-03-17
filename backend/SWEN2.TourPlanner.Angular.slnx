@@ -1,0 +1,29 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/">
+    <File Path="../AGENTS.md" />
+    <File Path="../CLAUDE.md" />
+    <File Path="../deploy/compose.yaml" />
+    <File Path="../deploy/Dockerfile" />
+    <File Path="../deploy/nginx.conf" />
+    <File Path="../docs/ARCHITECTURE.md" />
+    <File Path="../docs/POLICY.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="openapi/tourplanner.json" />
+    <File Path="Version.props" />
+  </Folder>
+  <Project Path="../frontend/Angular.esproj">
+    <Platform Project="AnyCPU" />
+  </Project>
+  <Project Path="API/API.csproj" />
+  <Project Path="BL/BL.csproj" />
+  <Project Path="Contracts/Contracts.csproj" />
+  <Project Path="DAL/DAL.csproj" />
+  <Project Path="Tests/Tests.csproj" />
+</Solution>

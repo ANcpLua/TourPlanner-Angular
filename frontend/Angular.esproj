@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.56">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+    </PropertyGroup>
+
+    <Target Name="NpmInstall" BeforeTargets="Build" Condition="!Exists('node_modules')">
+        <Exec Command="npm ci" WorkingDirectory="$(MSBuildProjectDirectory)"/>
+    </Target>
+
+    <Target Name="NgBuild" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+        <Exec Command="npx ng build" WorkingDirectory="$(MSBuildProjectDirectory)"/>
+    </Target>
+
+    <ItemGroup>
+        <None Include="src\**"/>
+        <None Include="public\**"/>
+        <None Include="package.json"/>
+        <None Include="angular.json"/>
+        <None Include="tsconfig.json"/>
+        <None Include="tsconfig.app.json"/>
+        <None Include="tsconfig.spec.json"/>
+        <None Include="proxy.conf.json"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="node_modules\**"/>
+        <None Remove="dist\**"/>
+        <None Remove="coverage\**"/>
+    </ItemGroup>
+
+</Project>

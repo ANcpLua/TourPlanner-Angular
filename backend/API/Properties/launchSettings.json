@@ -1,0 +1,16 @@
+﻿{
+  "profiles": {
+    "API": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "launchUrl": "http://localhost:7102",
+      "applicationUrl": "http://localhost:7102",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://+:7102",
+        "OpenRouteServiceApiKey": "CHANGE_ME",
+        "ConnectionStrings__TourPlannerDatabase": "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=postgres"
+      }
+    }
+  }
+}

@@ -1,0 +1,179 @@
+import { TestBed } from '@angular/core/testing';
+import { TourListComponent } from './tour-list.component';
+import { Tour } from '../models/tour.model';
+
+describe('TourListComponent', () => {
+  const sampleTours: Tour[] = [
+    {
+      id: 'tour-1',
+      name: 'City Walk',
+      description: 'A walk through the city',
+      from: 'Vienna',
+      to: 'Berlin',
+      transportType: 'Car',
+      distance: 680000,
+      estimatedTime: 420,
+      popularity: 'Not popular',
+      averageRating: null,
+      isChildFriendly: false,
+    },
+    {
+      id: 'tour-2',
+      name: 'Mountain Hike',
+      description: 'A hike through the mountains',
+      from: 'Budapest',
+      to: 'Warsaw',
+      transportType: 'Foot',
+      distance: 900000,
+      estimatedTime: 1200,
+      popularity: 'Popular',
+      averageRating: 4.5,
+      isChildFriendly: true,
+    },
+  ];
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [TourListComponent],
+    }).compileComponents();
+  });
+
+  it('should create', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', []);
+    fixture.detectChanges();
+    expect(fixture.componentInstance).toBeTruthy();
+  });
+
+  it('should show empty state when no tours', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', []);
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.empty-state')).not.toBeNull();
+  });
+
+  it('should render tour cards', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', sampleTours);
+    fixture.detectChanges();
+
+    const cards = fixture.nativeElement.querySelectorAll('.tour-card');
+    expect(cards).toHaveLength(2);
+  });
+
+  it('should display computed properties', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', sampleTours);
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.textContent).toContain('Not popular');
+    expect(el.textContent).toContain('Popular');
+    expect(el.textContent).toContain('4.5');
+    expect(el.textContent).toContain('Child-friendly');
+  });
+
+  it('should highlight selected tour', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', sampleTours);
+    fixture.componentRef.setInput('selectedTourId', 'tour-1');
+    fixture.detectChanges();
+
+    const selected = fixture.nativeElement.querySelector('.tour-card--selected');
+    expect(selected).not.toBeNull();
+    expect(selected.textContent).toContain('City Walk');
+  });
+
+  it('should emit selectTour on card click', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', sampleTours);
+    fixture.detectChanges();
+
+    let emitted: Tour | null = null;
+    fixture.componentInstance.selectTour.subscribe((tour: Tour) => (emitted = tour));
+
+    const cardBody = fixture.nativeElement.querySelector('.tour-card__body');
+    cardBody.click();
+
+    expect(emitted).not.toBeNull();
+    expect(emitted!.id).toBe('tour-1');
+  });
+
+  it('should show average rating tag when tour has averageRating', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', [
+      { ...sampleTours[1], averageRating: 4.5 },
+    ]);
+    fixture.detectChanges();
+
+    const tags = fixture.nativeElement.querySelectorAll('.tour-card__tag');
+    const ratingTag = Array.from(tags).find(
+      (tag) => (tag as HTMLElement).textContent?.includes('Rating:'),
+    ) as HTMLElement | undefined;
+
+    expect(ratingTag).toBeDefined();
+    expect(ratingTag!.textContent).toContain('4.5');
+  });
+
+  it('should not show average rating tag when averageRating is null', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', [
+      { ...sampleTours[0], averageRating: null },
+    ]);
+    fixture.detectChanges();
+
+    const tags = fixture.nativeElement.querySelectorAll('.tour-card__tag');
+    const ratingTag = Array.from(tags).find(
+      (tag) => (tag as HTMLElement).textContent?.includes('Rating:'),
+    );
+
+    expect(ratingTag).toBeUndefined();
+  });
+
+  it('should show child-friendly tag when tour is child-friendly', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', [
+      { ...sampleTours[1], isChildFriendly: true },
+    ]);
+    fixture.detectChanges();
+
+    const tags = fixture.nativeElement.querySelectorAll('.tour-card__tag');
+    const friendlyTag = Array.from(tags).find(
+      (tag) => (tag as HTMLElement).textContent?.includes('Child-friendly'),
+    ) as HTMLElement | undefined;
+
+    expect(friendlyTag).toBeDefined();
+    expect(friendlyTag!.classList).toContain('tour-card__tag--friendly');
+  });
+
+  it('should not show child-friendly tag when tour is not child-friendly', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', [
+      { ...sampleTours[0], isChildFriendly: false },
+    ]);
+    fixture.detectChanges();
+
+    const tags = fixture.nativeElement.querySelectorAll('.tour-card__tag');
+    const friendlyTag = Array.from(tags).find(
+      (tag) => (tag as HTMLElement).textContent?.includes('Child-friendly'),
+    );
+
+    expect(friendlyTag).toBeUndefined();
+  });
+
+  it('should emit deleteTour on delete button click', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', sampleTours);
+    fixture.detectChanges();
+
+    let emitted: Tour | null = null;
+    fixture.componentInstance.deleteTour.subscribe((tour: Tour) => (emitted = tour));
+
+    const deleteBtn = fixture.nativeElement.querySelector('.danger');
+    deleteBtn.click();
+
+    expect(emitted).not.toBeNull();
+  });
+});

@@ -1,0 +1,13 @@
+using BL.DomainModel;
+
+namespace BL.Interfaces;
+
+public interface ITourService
+{
+    Task<TourDomain> CreateTourAsync(TourDomain tour, CancellationToken cancellationToken = default);
+    IEnumerable<TourDomain> GetAllTours();
+    TourDomain? GetTourById(Guid id);
+    Task<TourDomain> UpdateTourAsync(TourDomain tour, CancellationToken cancellationToken = default);
+    Task DeleteTourAsync(Guid id, CancellationToken cancellationToken = default);
+    IEnumerable<TourDomain> SearchTours(string searchText);
+}

@@ -1,0 +1,81 @@
+<section class="reports-page">
+  <header class="reports-page__header">
+    <div>
+      <p class="reports-page__eyebrow">Feature</p>
+      <h1>Reports &amp; Export</h1>
+      <p class="reports-page__subtitle">
+        Generate PDF reports, export and import tour data.
+      </p>
+    </div>
+  </header>
+
+  @if (vm.errorMessage()) {
+    <p class="reports-page__error">{{ vm.errorMessage() }}</p>
+  }
+
+  @if (vm.successMessage()) {
+    <p class="reports-page__success">{{ vm.successMessage() }}</p>
+  }
+
+  <div class="reports-page__grid">
+    <section class="reports-page__card">
+      <h2>Summary Report</h2>
+      <p>Generate a PDF overview of all tours and their statistics.</p>
+      <button
+        type="button"
+        [disabled]="vm.isProcessing()"
+        (click)="vm.generateSummaryReport()"
+      >
+        {{ vm.isProcessing() ? 'Generating…' : 'Download Summary PDF' }}
+      </button>
+    </section>
+
+    <section class="reports-page__card">
+      <h2>Tour Report</h2>
+      <p>Generate a detailed PDF for a specific tour including its logs.</p>
+
+      <label class="reports-page__field">
+        <span>Select Tour</span>
+        <select (change)="onTourSelected($event)">
+          <option value="">Choose a tour…</option>
+          @for (tour of vm.tours(); track tour.id) {
+            <option [value]="tour.id">{{ tour.name }}</option>
+          }
+        </select>
+      </label>
+
+      <div class="reports-page__row">
+        <button
+          type="button"
+          [disabled]="!vm.selectedTourId() || vm.isProcessing()"
+          (click)="vm.generateTourReport()"
+        >
+          Download Tour PDF
+        </button>
+        <button
+          type="button"
+          class="secondary"
+          [disabled]="!vm.selectedTourId() || vm.isProcessing()"
+          (click)="vm.exportTour()"
+        >
+          Export as JSON
+        </button>
+      </div>
+    </section>
+
+    <section class="reports-page__card">
+      <h2>Import Tour</h2>
+      <p>Import a tour from a previously exported JSON file.</p>
+
+      <label class="reports-page__file-input">
+        <span>{{ vm.isProcessing() ? 'Importing…' : 'Choose JSON File' }}</span>
+        <input
+          type="file"
+          accept=".json"
+          [disabled]="vm.isProcessing()"
+          (change)="onFileSelected($event)"
+        />
+      </label>
+    </section>
+  </div>
+</section>

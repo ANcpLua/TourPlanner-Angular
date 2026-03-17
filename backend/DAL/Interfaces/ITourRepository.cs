@@ -1,0 +1,12 @@
+using DAL.PersistenceModel;
+
+namespace DAL.Interfaces;
+
+public interface ITourRepository
+{
+    Task<TourPersistence> CreateTourAsync(TourPersistence tour, string userId, CancellationToken cancellationToken = default);
+    IEnumerable<TourPersistence> GetAllTours(string userId);
+    TourPersistence? GetTourById(Guid id, string userId);
+    Task<TourPersistence> UpdateTourAsync(TourPersistence tour, string userId, CancellationToken cancellationToken = default);
+    Task DeleteTourAsync(Guid id, string userId, CancellationToken cancellationToken = default);
+}

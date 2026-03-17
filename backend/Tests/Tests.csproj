@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName>Tests</AssemblyName>
+        <IsTestProject>true</IsTestProject>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>Tests</RootNamespace>
+        <EnableNUnitRunner>true</EnableNUnitRunner>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Mapster"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory"/>
+        <PackageReference Include="SixLabors.ImageSharp"/>
+        <PackageReference Include="Autofac.Extensions.DependencyInjection"/>
+        <PackageReference Include="coverlet.MTP"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions"/>
+        <PackageReference Include="Autofac"/>
+        <PackageReference Include="Moq"/>
+        <PackageReference Include="NUnit"/>
+        <PackageReference Include="NUnit3TestAdapter"/>
+        <PackageReference Include="NUnit.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing"/>
+        <PackageReference Include="Serilog"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="NUnit.Framework"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\API\API.csproj"/>
+        <ProjectReference Include="..\BL\BL.csproj"/>
+        <ProjectReference Include="..\Contracts\Contracts.csproj"/>
+        <ProjectReference Include="..\DAL\DAL.csproj"/>
+    </ItemGroup>
+
+</Project>

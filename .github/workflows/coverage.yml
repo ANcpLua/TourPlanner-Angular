@@ -1,0 +1,118 @@
+name: Tests and Coverage
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  angular-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Run Angular tests with coverage
+        working-directory: ./frontend
+        run: >-
+          npx ng test --coverage
+          --coverage-reporters=cobertura
+          --coverage-reporters=text-summary
+          --coverage-include='src/app/**/*.ts'
+          --coverage-exclude='src/app/app.config.ts'
+          --coverage-exclude='src/app/app.routes.ts'
+          --coverage-exclude='src/app/core/api/generated/**'
+          --coverage-exclude='src/app/**/models/**'
+          --coverage-exclude='src/app/features/tours/components/tour-map.component.ts'
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./frontend/coverage/cobertura-coverage.xml
+          flags: angular
+          fail_ci_if_error: true
+
+  dotnet-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: tourplanner_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d tourplanner_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      ConnectionStrings__TourPlannerDatabase: Host=127.0.0.1;Port=5432;Database=tourplanner_test;Username=postgres;Password=postgres
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        working-directory: ./backend
+        run: dotnet restore SWEN2.TourPlanner.Angular.slnx
+
+      - name: Build
+        working-directory: ./backend
+        run: dotnet build SWEN2.TourPlanner.Angular.slnx --no-restore --configuration Release
+
+      - name: Install libgdiplus for System.Drawing on Linux
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgdiplus
+
+      - name: Run tests with coverage (MTP + coverlet)
+        working-directory: ./backend
+        run: |
+          ./Tests/bin/Release/net10.0/Tests \
+            --coverlet --coverlet-output-format cobertura \
+            --coverlet-exclude-by-file "**/Program.cs" \
+            --coverlet-exclude-by-file "**/*.g.cs" \
+            --coverlet-exclude-by-file "**/*.g.i.cs" \
+            --coverlet-exclude-by-file "**/*.designer.cs" \
+            --coverlet-exclude-by-file "**/*.Generated.cs" \
+            --coverlet-exclude "[*]*.Migrations.*" \
+            --coverlet-exclude-by-attribute ExcludeFromCodeCoverage \
+            --coverlet-exclude-by-attribute GeneratedCodeAttribute \
+            --coverlet-exclude-by-attribute CompilerGeneratedAttribute \
+            --results-directory TestResults
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./backend/TestResults/coverage.cobertura.xml
+          flags: dotnet
+          fail_ci_if_error: true

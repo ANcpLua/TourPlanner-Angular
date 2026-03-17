@@ -1,0 +1,21 @@
+<div class="shell">
+  <app-navbar />
+
+  @if (authState.isAuthenticated()) {
+    <div class="shell__search">
+      <app-search
+        [searchText]="searchVm.searchText()"
+        [results]="searchVm.results()"
+        [hasSearched]="searchVm.hasSearched()"
+        (searchTextChange)="searchVm.searchText.set($event)"
+        (search)="searchVm.search()"
+        (clear)="searchVm.clear()"
+        (navigateToTour)="searchVm.navigateToTour($event)"
+      />
+    </div>
+  }
+
+  <main class="shell__content">
+    <router-outlet />
+  </main>
+</div>

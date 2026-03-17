@@ -1,0 +1,27 @@
+<section class="auth-page">
+  <h1>Login</h1>
+
+  @if (vm.errorMessage()) {
+    <p class="auth-page__error">{{ vm.errorMessage() }}</p>
+  }
+
+  <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
+    <label class="auth-form__field">
+      <span>Email</span>
+      <input type="email" formControlName="email" />
+    </label>
+
+    <label class="auth-form__field">
+      <span>Password</span>
+      <input type="password" formControlName="password" />
+    </label>
+
+    <button type="submit" [disabled]="form.invalid || vm.isLoading()">
+      {{ vm.isLoading() ? 'Logging in...' : 'Login' }}
+    </button>
+  </form>
+
+  <p class="auth-page__link">
+    No account? <a routerLink="/register">Register here</a>
+  </p>
+</section>
