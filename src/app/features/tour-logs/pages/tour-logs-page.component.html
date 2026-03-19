@@ -1,0 +1,68 @@
+<section class="logs-page">
+  <header class="logs-page__header">
+    <div>
+      <p class="logs-page__eyebrow">Feature</p>
+      <h1>Tour Logs</h1>
+      <p class="logs-page__subtitle">
+        Track experiences, difficulty and ratings for each tour.
+      </p>
+    </div>
+
+    <div class="logs-page__actions">
+      <button
+        type="button"
+        [disabled]="!vm.selectedTourId()"
+        (click)="vm.openCreateForm()"
+      >
+        Add Log
+      </button>
+    </div>
+  </header>
+
+  <label class="logs-page__tour-select">
+    <span>Select Tour</span>
+    <select [value]="vm.selectedTourId() ?? ''" (change)="onTourSelected($event)">
+      <option value="">Choose a tour…</option>
+      @for (tour of vm.tours(); track tour.id) {
+        <option [value]="tour.id">{{ tour.name }} ({{ tour.from }} → {{ tour.to }})</option>
+      }
+    </select>
+  </label>
+
+  @if (vm.errorMessage()) {
+    <p class="logs-page__error">{{ vm.errorMessage() }}</p>
+  }
+
+  @if (vm.selectedTourId()) {
+    <div class="logs-page__grid">
+      <section class="logs-page__panel">
+        @if (vm.isLoading()) {
+          <p class="logs-page__state">Loading logs…</p>
+        } @else {
+          <app-tour-log-list
+            [logs]="vm.logs()"
+            (editLog)="vm.openEditForm($event)"
+            (deleteLog)="vm.deleteLog($event)"
+          />
+        }
+      </section>
+
+      @if (vm.isFormVisible() && vm.selectedTourId(); as tourId) {
+        <section class="logs-page__panel logs-page__panel--form">
+          <app-tour-log-form
+            [log]="vm.editingLog()"
+            [tourId]="tourId"
+            [submitting]="vm.isSaving()"
+            (saveLog)="vm.saveLog($event)"
+            (cancel)="vm.closeForm()"
+          />
+        </section>
+      }
+    </div>
+  } @else {
+    <div class="logs-page__state">
+      <h2>No tour selected</h2>
+      <p>Choose a tour from the dropdown to view and manage its logs.</p>
+    </div>
+  }
+</section>

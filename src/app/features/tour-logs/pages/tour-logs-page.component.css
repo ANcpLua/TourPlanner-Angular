@@ -1,0 +1,98 @@
+.logs-page {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.logs-page__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.logs-page__header h1,
+.logs-page__header p,
+.logs-page__state h2,
+.logs-page__state p {
+  margin: 0;
+}
+
+.logs-page__eyebrow {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8d5a21;
+}
+
+.logs-page__subtitle,
+.logs-page__state p {
+  color: #5f6670;
+}
+
+.logs-page__actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.logs-page__actions button {
+  padding: 0.75rem 0.95rem;
+  border: 0;
+  border-radius: 0.85rem;
+  background: #20242b;
+  color: #fff;
+  cursor: pointer;
+}
+
+.logs-page__actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.logs-page__tour-select {
+  display: grid;
+  gap: 0.4rem;
+  max-width: 420px;
+}
+
+.logs-page__tour-select span {
+  font-weight: 600;
+}
+
+.logs-page__tour-select select {
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid rgba(49, 53, 59, 0.14);
+  border-radius: 0.8rem;
+  background: #fffdfa;
+}
+
+.logs-page__error,
+.logs-page__state {
+  padding: 1rem 1.15rem;
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.logs-page__error {
+  border: 1px solid rgba(156, 47, 47, 0.2);
+  color: #9c2f2f;
+}
+
+.logs-page__grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.logs-page__panel {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 960px) {
+  .logs-page__grid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+    align-items: start;
+  }
+}

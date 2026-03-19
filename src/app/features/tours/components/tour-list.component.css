@@ -72,6 +72,26 @@
   font-size: 0.92rem;
 }
 
+.tour-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.tour-card__tag {
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(49, 53, 59, 0.08);
+  color: #5f6670;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.tour-card__tag--friendly {
+  background: rgba(22, 163, 74, 0.12);
+  color: #166534;
+}
+
 .tour-card__actions button {
   padding: 0.55rem 0.85rem;
   border: 0;

@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+    <IsPackable>false</IsPackable>
+    <FrontendRoot>$(MSBuildThisFileDirectory)</FrontendRoot>
+    <NpmExe Condition="'$(NpmExe)' == '' and Exists('/Users/ancplua/.nvm/versions/node/v22.21.1/bin/npm')">/Users/ancplua/.nvm/versions/node/v22.21.1/bin/npm</NpmExe>
+    <NpmExe Condition="'$(NpmExe)' == ''">npm</NpmExe>
+    <DistDir>$(FrontendRoot)dist</DistDir>
+    <NodeModulesDir>$(FrontendRoot)node_modules</NodeModulesDir>
+  </PropertyGroup>
+
+  <Target Name="RestoreFrontend" BeforeTargets="Restore">
+    <Message Text="[Frontend] Restoring dependencies (npm)..." Importance="high" />
+    <Exec Command="$(NpmExe) install" WorkingDirectory="$(FrontendRoot)" />
+  </Target>
+
+  <Target Name="BuildFrontend" BeforeTargets="Build">
+    <Message Text="[Frontend] Building Angular application..." Importance="high" />
+    <Exec Command="$(NpmExe) run build" WorkingDirectory="$(FrontendRoot)" />
+  </Target>
+
+  <Target Name="Test">
+    <Message Text="[Frontend] Running Angular tests..." Importance="high" />
+    <Exec Command="$(NpmExe) test -- --watch=false" WorkingDirectory="$(FrontendRoot)" ContinueOnError="false" />
+  </Target>
+
+  <Target Name="CleanFrontend" BeforeTargets="Clean">
+    <Message Text="[Frontend] Cleaning artifacts..." Importance="high" />
+    <RemoveDir Directories="$(DistDir)" />
+  </Target>
+
+  <ItemGroup>
+    <None Include="package.json" />
+    <None Include="package-lock.json" />
+    <None Include="angular.json" />
+    <None Include="tsconfig.json" />
+    <None Include="tsconfig.app.json" />
+    <None Include="tsconfig.spec.json" />
+    <None Include="src\**" />
+    <None Include="public\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="node_modules\**" />
+  </ItemGroup>
+
+</Project>

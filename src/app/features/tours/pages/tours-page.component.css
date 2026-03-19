@@ -114,7 +114,17 @@
 .tour-detail__actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.75rem;
+}
+
+.tour-detail__link {
+  padding: 0.75rem 0.95rem;
+  border-radius: 0.85rem;
+  background: rgba(141, 90, 33, 0.12);
+  color: #8d5a21;
+  text-decoration: none;
+  font-weight: 600;
 }
 
 @media (min-width: 960px) {

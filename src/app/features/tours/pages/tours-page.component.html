@@ -4,47 +4,55 @@
       <p class="tours-page__eyebrow">Feature</p>
       <h1>Tours</h1>
       <p class="tours-page__subtitle">
-        First vertical slice: load, create, edit and delete tours against the
-        C# backend.
+        Load, create, edit and delete tours against the C# backend.
       </p>
     </div>
 
     <div class="tours-page__actions">
-      <button type="button" class="secondary" (click)="loadTours()">
+      <button type="button" class="secondary" (click)="vm.loadTours()">
         Refresh
       </button>
-      <button type="button" (click)="openCreateForm()">Add Tour</button>
+      <button type="button" (click)="vm.openCreateForm()">Add Tour</button>
     </div>
   </header>
 
-  @if (errorMessage()) {
-    <p class="tours-page__error">{{ errorMessage() }}</p>
+  @if (vm.errorMessage()) {
+    <p class="tours-page__error">{{ vm.errorMessage() }}</p>
+  }
+
+  @if (vm.mapCoordinates(); as coords) {
+    <app-tour-map
+      [fromLat]="coords.fromLat"
+      [fromLng]="coords.fromLng"
+      [toLat]="coords.toLat"
+      [toLng]="coords.toLng"
+    />
   }
 
   <div class="tours-page__grid">
     <section class="tours-page__panel">
-      @if (isLoading()) {
+      @if (vm.isLoading()) {
         <p class="tours-page__state">Loading tours…</p>
       } @else {
         <app-tour-list
-          [tours]="tours()"
-          [selectedTourId]="selectedTourId()"
-          (selectTour)="selectTour($event)"
-          (editTour)="openEditForm($event)"
-          (deleteTour)="deleteTour($event)"
+          [tours]="vm.tours()"
+          [selectedTourId]="vm.selectedTourId()"
+          (selectTour)="vm.selectTour($event)"
+          (editTour)="vm.openEditForm($event)"
+          (deleteTour)="vm.deleteTour($event)"
         />
       }
     </section>
 
     <section class="tours-page__panel tours-page__panel--detail">
-      @if (isFormVisible()) {
+      @if (vm.isFormVisible()) {
         <app-tour-form
-          [tour]="editingTour()"
-          [submitting]="isSaving()"
-          (saveTour)="saveTour($event)"
-          (cancel)="closeForm()"
+          [tour]="vm.editingTour()"
+          [submitting]="vm.isSaving()"
+          (saveTour)="vm.saveTour($event)"
+          (cancel)="vm.closeForm()"
         />
-      } @else if (selectedTour(); as tour) {
+      } @else if (vm.selectedTour(); as tour) {
         <article class="tour-detail">
           <p class="tour-detail__eyebrow">Selected Tour</p>
           <h2>{{ tour.name }}</h2>
@@ -68,14 +76,30 @@
               <dd>{{ tour.estimatedTime ?? 0 | number: '1.0-0' }} min</dd>
             </div>
             <div>
-              <dt>Image Path</dt>
-              <dd>{{ tour.imagePath || 'None' }}</dd>
+              <dt>Popularity</dt>
+              <dd>{{ tour.popularity }}</dd>
+            </div>
+            @if (tour.averageRating !== null) {
+              <div>
+                <dt>Avg. Rating</dt>
+                <dd>{{ tour.averageRating | number: '1.1-1' }} / 5</dd>
+              </div>
+            }
+            <div>
+              <dt>Child-friendly</dt>
+              <dd>{{ tour.isChildFriendly ? 'Yes' : 'No' }}</dd>
             </div>
           </dl>
 
           <div class="tour-detail__actions">
-            <button type="button" (click)="openEditForm(tour)">Edit</button>
-            <button type="button" class="secondary" (click)="openCreateForm()">
+            <button type="button" (click)="vm.openEditForm(tour)">Edit</button>
+            <a
+              class="tour-detail__link"
+              [routerLink]="['/tour-logs', tour.id]"
+            >
+              View Logs
+            </a>
+            <button type="button" class="secondary" (click)="vm.openCreateForm()">
               New Tour
             </button>
           </div>

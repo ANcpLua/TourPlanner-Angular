@@ -1,0 +1,73 @@
+<form class="log-form" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="log-form__header">
+    <div>
+      <p class="log-form__eyebrow">Tour Logs</p>
+      <h2>{{ log() ? 'Edit Log' : 'Create Log' }}</h2>
+    </div>
+  </div>
+
+  <label class="log-form__field">
+    <span>Comment</span>
+    <textarea rows="3" formControlName="comment"></textarea>
+    @if (showError('comment', 'required')) {
+      <small>Comment is required.</small>
+    }
+  </label>
+
+  <div class="log-form__row">
+    <label class="log-form__field">
+      <span>Difficulty (1–5)</span>
+      <input type="number" min="1" max="5" step="1" formControlName="difficulty" />
+      @if (showError('difficulty', 'required')) {
+        <small>Difficulty is required.</small>
+      }
+      @if (showError('difficulty', 'min') || showError('difficulty', 'max')) {
+        <small>Must be between 1 and 5.</small>
+      }
+    </label>
+
+    <label class="log-form__field">
+      <span>Rating (1–5)</span>
+      <input type="number" min="1" max="5" step="1" formControlName="rating" />
+      @if (showError('rating', 'required')) {
+        <small>Rating is required.</small>
+      }
+      @if (showError('rating', 'min') || showError('rating', 'max')) {
+        <small>Must be between 1 and 5.</small>
+      }
+    </label>
+  </div>
+
+  <div class="log-form__row">
+    <label class="log-form__field">
+      <span>Total Distance (m)</span>
+      <input type="number" min="0" step="1" formControlName="totalDistance" />
+      @if (showError('totalDistance', 'required')) {
+        <small>Distance is required.</small>
+      }
+      @if (showError('totalDistance', 'min')) {
+        <small>Must be positive.</small>
+      }
+    </label>
+
+    <label class="log-form__field">
+      <span>Total Time (hours)</span>
+      <input type="number" min="0" step="0.1" formControlName="totalTime" />
+      @if (showError('totalTime', 'required')) {
+        <small>Time is required.</small>
+      }
+      @if (showError('totalTime', 'min')) {
+        <small>Must be positive.</small>
+      }
+    </label>
+  </div>
+
+  <div class="log-form__actions">
+    <button type="button" class="log-form__secondary" (click)="cancel.emit()">
+      Cancel
+    </button>
+    <button type="submit" [disabled]="form.invalid || submitting()">
+      {{ submitting() ? 'Saving…' : 'Save Log' }}
+    </button>
+  </div>
+</form>

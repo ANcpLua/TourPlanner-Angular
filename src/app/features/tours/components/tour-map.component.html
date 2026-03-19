@@ -1,0 +1,9 @@
+<div class="map-wrapper">
+  <button type="button" class="map-toggle" (click)="toggle()">
+    {{ isVisible() ? 'Hide Map' : 'Show Map' }}
+  </button>
+
+  @if (isVisible()) {
+    <div class="map-container" #mapEl></div>
+  }
+</div>

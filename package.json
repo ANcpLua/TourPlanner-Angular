@@ -2,13 +2,19 @@
   "name": "swen2-tourplanner-angular",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve --port 7226",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "ng": "./node_modules/.bin/ng",
+    "start": "./node_modules/.bin/ng serve --port 7226",
+    "build": "./node_modules/.bin/ng build",
+    "watch": "./node_modules/.bin/ng build --watch --configuration development",
+    "test": "./node_modules/.bin/ng test",
+    "generate:openapi": "dotnet build API/API.csproj -tlp:ErrorsOnly",
+    "generate:types": "./node_modules/.bin/openapi-typescript ./openapi/tourplanner.json -o src/app/core/api/generated/api-types.ts",
+    "generate": "npm run generate:openapi && npm run generate:types"
   },
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "packageManager": "npm@10.9.4",
   "dependencies": {
     "@angular/common": "^21.2.0",
@@ -17,6 +23,7 @@
     "@angular/forms": "^21.2.0",
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
+    "leaflet": "^1.9.4",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
@@ -24,7 +31,9 @@
     "@angular/build": "^21.2.2",
     "@angular/cli": "^21.2.2",
     "@angular/compiler-cli": "^21.2.0",
+    "@types/leaflet": "^1.9.21",
     "jsdom": "^28.0.0",
+    "openapi-typescript": "^7.13.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"

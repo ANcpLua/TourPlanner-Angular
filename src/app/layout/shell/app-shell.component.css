@@ -2,6 +2,12 @@
   min-height: 100dvh;
 }
 
+.shell__search {
+  width: min(1200px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1rem 0 0;
+}
+
 .shell__content {
   width: min(1200px, calc(100% - 2rem));
   margin: 0 auto;

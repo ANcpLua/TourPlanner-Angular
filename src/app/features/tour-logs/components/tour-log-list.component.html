@@ -1,0 +1,34 @@
+@if (logs().length === 0) {
+  <div class="empty-state">
+    <h2>No logs yet</h2>
+    <p>Add the first log for this tour to start tracking your experiences.</p>
+  </div>
+} @else {
+  <div class="log-list">
+    @for (log of logs(); track trackLog($index, log)) {
+      <article class="log-card">
+        <div class="log-card__body">
+          <div class="log-card__header">
+            <h3>{{ log.dateTime | date: 'medium' }}</h3>
+          </div>
+
+          <p class="log-card__comment">{{ log.comment }}</p>
+
+          <div class="log-card__meta">
+            <span>Difficulty: {{ log.difficulty }}/5</span>
+            <span>Rating: {{ log.rating }}/5</span>
+            <span>Distance: {{ log.totalDistance | number: '1.0-0' }} m</span>
+            <span>Time: {{ log.totalTime | number: '1.1-1' }} h</span>
+          </div>
+        </div>
+
+        <div class="log-card__actions">
+          <button type="button" (click)="editLog.emit(log)">Edit</button>
+          <button type="button" class="danger" (click)="deleteLog.emit(log)">
+            Delete
+          </button>
+        </div>
+      </article>
+    }
+  </div>
+}

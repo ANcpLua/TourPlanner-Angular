@@ -26,6 +26,16 @@
             <span>Distance: {{ tour.distance ?? 0 | number: '1.0-0' }} m</span>
             <span>Time: {{ tour.estimatedTime ?? 0 | number: '1.0-0' }} min</span>
           </div>
+
+          <div class="tour-card__tags">
+            <span class="tour-card__tag">{{ tour.popularity }}</span>
+            @if (tour.averageRating !== null) {
+              <span class="tour-card__tag">Rating: {{ tour.averageRating | number: '1.1-1' }}</span>
+            }
+            @if (tour.isChildFriendly) {
+              <span class="tour-card__tag tour-card__tag--friendly">Child-friendly</span>
+            }
+          </div>
         </button>
 
         <div class="tour-card__actions">

@@ -1,0 +1,37 @@
+<div class="search">
+  <div class="search__bar">
+    <input
+      type="text"
+      placeholder="Search tours…"
+      [ngModel]="vm.searchText()"
+      (ngModelChange)="vm.searchText.set($event)"
+      (keydown)="onKeydown($event)"
+    />
+    <button type="button" (click)="vm.search()" [disabled]="!vm.searchText().trim()">
+      Search
+    </button>
+    @if (vm.hasSearched()) {
+      <button type="button" class="search__clear" (click)="vm.clear()">Clear</button>
+    }
+  </div>
+
+  @if (vm.hasSearched()) {
+    <div class="search__results">
+      @if (vm.results().length === 0) {
+        <p class="search__empty">No tours found.</p>
+      } @else {
+        @for (tour of vm.results(); track tour.id) {
+          <button
+            type="button"
+            class="search__result"
+            (click)="vm.navigateToTour(tour)"
+          >
+            <strong>{{ tour.name }}</strong>
+            <span>{{ tour.from }} → {{ tour.to }}</span>
+            <span>{{ tour.distance ?? 0 | number: '1.0-0' }} m</span>
+          </button>
+        }
+      }
+    </div>
+  }
+</div>

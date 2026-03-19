@@ -29,6 +29,12 @@ export class ToursApiService {
     return this.apiClient.delete(`api/tour/${id}`);
   }
 
+  searchTours(searchText: string): Observable<Tour[]> {
+    return this.apiClient.get<Tour[]>(
+      `api/tour/search/${encodeURIComponent(searchText)}`,
+    );
+  }
+
   resolveRoute(
     request: ResolveRouteRequest,
   ): Observable<ResolveRouteResponse> {
