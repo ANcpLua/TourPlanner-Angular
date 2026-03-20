@@ -29,19 +29,10 @@ public static class MappingConfiguration
 
         config.NewConfig<TourDomain, TourDto>()
             .Map(static dest => dest.TourLogs, static src => src.Logs)
-            .Map(static dest => dest.Popularity, static src => FormatPopularity(src.PopularityScore));
+            .Map(static dest => dest.Popularity, static src => src.FormattedPopularity);
 
         config.NewConfig<TourDto, TourDomain>().Map(static dest => dest.Logs, static src => src.TourLogs);
     }
-
-    private static string FormatPopularity(int score) => score switch
-    {
-        >= 4 => "Very popular",
-        3 => "Popular",
-        2 => "Moderately popular",
-        1 => "Less popular",
-        _ => "Not popular"
-    };
 
     private static void ConfigureTourLogMappings(TypeAdapterConfig config)
     {

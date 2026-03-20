@@ -62,17 +62,9 @@ public class TourService(ITourRepository tourRepository, IMapper mapper, IUserCo
     private static bool MatchesComputedValues(TourDomain tour, string searchText)
     {
         var text = searchText.ToUpperInvariant();
-        var popularity = FormatPopularity(tour.PopularityScore).ToUpperInvariant();
+        var popularity = tour.FormattedPopularity.ToUpperInvariant();
         return popularity.Contains(text) ||
                (tour.IsChildFriendly && "CHILD-FRIENDLY".Contains(text));
     }
 
-    private static string FormatPopularity(int score) => score switch
-    {
-        >= 4 => "Very popular",
-        3 => "Popular",
-        2 => "Moderately popular",
-        1 => "Less popular",
-        _ => "Not popular"
-    };
 }
