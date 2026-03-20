@@ -1,5 +1,5 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TourFormComponent } from '../components/tour-form.component';
 import { TourListComponent } from '../components/tour-list.component';
@@ -8,6 +8,7 @@ import { TourViewModel } from '../viewmodels/tour.viewmodel';
 
 @Component({
   selector: 'app-tours-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, DecimalPipe, TourFormComponent, TourListComponent, TourMapComponent, RouterLink],
   templateUrl: './tours-page.component.html',
   styleUrl: './tours-page.component.css',

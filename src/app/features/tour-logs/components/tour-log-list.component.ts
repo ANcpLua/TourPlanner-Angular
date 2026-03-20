@@ -1,9 +1,10 @@
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TourLog } from '../models/tour-log.model';
 
 @Component({
   selector: 'app-tour-log-list',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, DatePipe, DecimalPipe],
   templateUrl: './tour-log-list.component.html',
   styleUrl: './tour-log-list.component.css',

@@ -1,10 +1,11 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SearchViewModel } from '../viewmodels/search.viewmodel';
 
 @Component({
   selector: 'app-search',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, DecimalPipe],
   templateUrl: './search.component.html',
   styleUrl: './search.component.css',

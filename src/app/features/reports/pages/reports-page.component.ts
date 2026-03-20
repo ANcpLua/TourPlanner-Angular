@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { ReportViewModel } from '../viewmodels/report.viewmodel';
 
 @Component({
   selector: 'app-reports-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   templateUrl: './reports-page.component.html',
   styleUrl: './reports-page.component.css',

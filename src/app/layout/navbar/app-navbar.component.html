@@ -6,9 +6,9 @@
 
   @if (authState.isAuthenticated()) {
     <nav class="navbar__links" aria-label="Primary">
-      <a routerLink="/tours" routerLinkActive="navbar__link--active" class="navbar__link">Tours</a>
-      <a routerLink="/tour-logs" routerLinkActive="navbar__link--active" class="navbar__link">Tour Logs</a>
-      <a routerLink="/reports" routerLinkActive="navbar__link--active" class="navbar__link">Reports</a>
+      <a routerLink="/tours" routerLinkActive="navbar__link--active" ariaCurrentWhenActive="page" class="navbar__link">Tours</a>
+      <a routerLink="/tour-logs" routerLinkActive="navbar__link--active" ariaCurrentWhenActive="page" class="navbar__link">Tour Logs</a>
+      <a routerLink="/reports" routerLinkActive="navbar__link--active" ariaCurrentWhenActive="page" class="navbar__link">Reports</a>
     </nav>
 
     <div class="navbar__user">

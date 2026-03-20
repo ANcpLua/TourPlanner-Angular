@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   effect,
@@ -11,6 +12,7 @@ import * as L from 'leaflet';
 
 @Component({
   selector: 'app-tour-map',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tour-map.component.html',
   styleUrl: './tour-map.component.css',
 })

@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Component, effect, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, output } from '@angular/core';
 import {
   createEmptyTourLogFormValue,
   createTourLogFormValue,
@@ -26,6 +26,7 @@ type TourLogFormGroup = FormGroup<{
 
 @Component({
   selector: 'app-tour-log-form',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './tour-log-form.component.html',
   styleUrl: './tour-log-form.component.css',

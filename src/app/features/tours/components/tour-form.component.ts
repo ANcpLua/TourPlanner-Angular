@@ -7,7 +7,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { Component, effect, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, output } from '@angular/core';
 import {
   CITY_OPTIONS,
   createEmptyTourFormValue,
@@ -41,6 +41,7 @@ function distinctCitiesValidator(
 
 @Component({
   selector: 'app-tour-form',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './tour-form.component.html',
   styleUrl: './tour-form.component.css',

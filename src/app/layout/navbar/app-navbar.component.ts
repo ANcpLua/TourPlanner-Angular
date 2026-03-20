@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthState } from '../../core/auth/auth-state.service';
 import { AuthApiService } from '../../core/auth/auth-api.service';
@@ -6,6 +6,7 @@ import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './app-navbar.component.html',
   styleUrl: './app-navbar.component.css',
