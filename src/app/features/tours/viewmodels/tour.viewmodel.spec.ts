@@ -133,4 +133,140 @@ describe('TourViewModel', () => {
     expect(view.averageRating).toBeUndefined();
     expect(view.isChildFriendly).toBeUndefined();
   });
+
+  describe('saveTour', () => {
+    const formValue: import('../models/tour.model').TourFormValue = {
+      id: null,
+      name: 'New Tour',
+      description: 'A new tour',
+      from: 'Vienna',
+      to: 'Berlin',
+      transportType: 'Car',
+    };
+
+    const routeResponse = { distance: 680000, duration: 420 };
+
+    const createdTour: Tour = {
+      ...sampleTour,
+      id: 'tour-new',
+      name: 'New Tour',
+    };
+
+    // Helper: drain the microtask queue enough for RxJS firstValueFrom chains
+    // to advance past a completed HTTP observable to the next HTTP call.
+    // Two Promise.resolve() ticks are needed: one for RxJS to call observer.complete()
+    // through take(1), and one for firstValueFrom's internal promise to resolve.
+    const tick = () => Promise.resolve().then(() => Promise.resolve());
+
+    it('should create tour when no id, reload tours and close form', async () => {
+      vm.openCreateForm();
+
+      const promise = vm.saveTour(formValue);
+
+      await tick();
+      httpTesting.expectOne({ method: 'POST', url: `${baseUrl}api/routes/resolve` }).flush(routeResponse);
+      await tick();
+      httpTesting.expectOne({ method: 'POST', url: `${baseUrl}api/tour` }).flush(createdTour);
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tour` }).flush([createdTour]);
+      await promise;
+
+      expect(vm.tours()).toHaveLength(1);
+      expect(vm.selectedTourId()).toBe('tour-new');
+      expect(vm.isFormVisible()).toBe(false);
+      expect(vm.isSaving()).toBe(false);
+    });
+
+    it('should update tour when id exists, reload tours and close form', async () => {
+      const updateFormValue: import('../models/tour.model').TourFormValue = {
+        ...formValue,
+        id: 'tour-1',
+        name: 'Updated Tour',
+      };
+      const updatedTour: Tour = { ...sampleTour, name: 'Updated Tour' };
+
+      vm.openEditForm(sampleTour);
+
+      const promise = vm.saveTour(updateFormValue);
+
+      await tick();
+      httpTesting.expectOne({ method: 'POST', url: `${baseUrl}api/routes/resolve` }).flush(routeResponse);
+      await tick();
+      httpTesting.expectOne({ method: 'PUT', url: `${baseUrl}api/tour/tour-1` }).flush(updatedTour);
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tour` }).flush([updatedTour]);
+      await promise;
+
+      expect(vm.tours()).toHaveLength(1);
+      expect(vm.isFormVisible()).toBe(false);
+    });
+
+    it('should set error message on save failure', async () => {
+      const promise = vm.saveTour(formValue);
+
+      await tick();
+      httpTesting.expectOne({ method: 'POST', url: `${baseUrl}api/routes/resolve` }).error(new ProgressEvent('error'));
+      await promise;
+
+      expect(vm.errorMessage()).toBeTruthy();
+      expect(vm.isSaving()).toBe(false);
+    });
+
+    it('should set isSaving to true during save and false after', async () => {
+      expect(vm.isSaving()).toBe(false);
+
+      const promise = vm.saveTour(formValue);
+
+      // isSaving is set synchronously before any await inside saveTour
+      expect(vm.isSaving()).toBe(true);
+
+      await tick();
+      httpTesting.expectOne({ method: 'POST', url: `${baseUrl}api/routes/resolve` }).flush(routeResponse);
+      await tick();
+      httpTesting.expectOne({ method: 'POST', url: `${baseUrl}api/tour` }).flush(createdTour);
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tour` }).flush([createdTour]);
+      await promise;
+
+      expect(vm.isSaving()).toBe(false);
+    });
+  });
+
+  describe('deleteTour', () => {
+    const tick = () => Promise.resolve().then(() => Promise.resolve());
+
+    it('should delete tour and reload when user confirms', async () => {
+      vi.spyOn(window, 'confirm').mockReturnValue(true);
+
+      // Pre-load so there is something in the list to reload
+      const loadPromise = vm.loadTours();
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tour` }).flush([sampleTour]);
+      await loadPromise;
+
+      const promise = vm.deleteTour(sampleTour);
+
+      await tick();
+      httpTesting.expectOne({ method: 'DELETE', url: `${baseUrl}api/tour/tour-1` }).flush(null);
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tour` }).flush([]);
+      await promise;
+
+      expect(vm.tours()).toHaveLength(0);
+      expect(vm.errorMessage()).toBeNull();
+
+      vi.restoreAllMocks();
+    });
+
+    it('should not issue any HTTP request when user cancels confirm', async () => {
+      vi.spyOn(window, 'confirm').mockReturnValue(false);
+
+      await vm.deleteTour(sampleTour);
+
+      // httpTesting.verify() in afterEach asserts no unexpected requests were made
+      expect(vm.errorMessage()).toBeNull();
+
+      vi.restoreAllMocks();
+    });
+  });
 });

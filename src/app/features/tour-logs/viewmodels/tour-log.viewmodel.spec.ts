@@ -91,4 +91,129 @@ describe('TourLogViewModel', () => {
     vm.openEditForm(sampleLog);
     expect(vm.editingLog()?.comment).toBe('Nice walk');
   });
+
+  describe('saveLog', () => {
+    // Two Promise.resolve() ticks needed: one for RxJS take(1) completion,
+    // one for firstValueFrom's internal promise to resolve and schedule the next HTTP call.
+    const tick = () => Promise.resolve().then(() => Promise.resolve());
+
+    const createFormValue: import('../models/tour-log.model').TourLogFormValue = {
+      id: null,
+      tourId: 'tour-1',
+      comment: 'Great hike',
+      difficulty: 3,
+      totalDistance: 8000,
+      totalTime: 2.5,
+      rating: 5,
+    };
+
+    const createdLog: TourLog = {
+      ...sampleLog,
+      id: 'log-new',
+      comment: 'Great hike',
+    };
+
+    // Select a tour first so loadLogs (called after save) knows which tour to use
+    async function selectTour(): Promise<void> {
+      const p = vm.selectTour('tour-1');
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tourlog/bytour/tour-1` }).flush([sampleLog]);
+      await p;
+    }
+
+    it('should create log when no id, reload logs and close form', async () => {
+      await selectTour();
+      vm.openCreateForm();
+
+      const promise = vm.saveLog(createFormValue);
+
+      await tick();
+      httpTesting.expectOne({ method: 'POST', url: `${baseUrl}api/tourlog` }).flush(createdLog);
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tourlog/bytour/tour-1` }).flush([createdLog]);
+      await promise;
+
+      expect(vm.logs()).toHaveLength(1);
+      expect(vm.logs()[0].comment).toBe('Great hike');
+      expect(vm.isFormVisible()).toBe(false);
+      expect(vm.isSaving()).toBe(false);
+    });
+
+    it('should update log when id exists, reload logs and close form', async () => {
+      await selectTour();
+      vm.openEditForm(sampleLog);
+
+      const updateFormValue: import('../models/tour-log.model').TourLogFormValue = {
+        ...createFormValue,
+        id: 'log-1',
+        comment: 'Updated comment',
+      };
+      const updatedLog: TourLog = { ...sampleLog, comment: 'Updated comment' };
+
+      const promise = vm.saveLog(updateFormValue);
+
+      await tick();
+      httpTesting.expectOne({ method: 'PUT', url: `${baseUrl}api/tourlog/log-1` }).flush(updatedLog);
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tourlog/bytour/tour-1` }).flush([updatedLog]);
+      await promise;
+
+      expect(vm.logs()[0].comment).toBe('Updated comment');
+      expect(vm.isFormVisible()).toBe(false);
+    });
+
+    it('should set error message on save failure', async () => {
+      await selectTour();
+
+      const promise = vm.saveLog(createFormValue);
+
+      await tick();
+      httpTesting.expectOne({ method: 'POST', url: `${baseUrl}api/tourlog` }).error(new ProgressEvent('error'));
+      await promise;
+
+      expect(vm.errorMessage()).toBeTruthy();
+      expect(vm.isSaving()).toBe(false);
+    });
+  });
+
+  describe('deleteLog', () => {
+    const tick = () => Promise.resolve().then(() => Promise.resolve());
+
+    async function selectTourWithLog(): Promise<void> {
+      const p = vm.selectTour('tour-1');
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tourlog/bytour/tour-1` }).flush([sampleLog]);
+      await p;
+    }
+
+    it('should delete log and reload when user confirms', async () => {
+      await selectTourWithLog();
+      vi.spyOn(window, 'confirm').mockReturnValue(true);
+
+      const promise = vm.deleteLog(sampleLog);
+
+      await tick();
+      httpTesting.expectOne({ method: 'DELETE', url: `${baseUrl}api/tourlog/log-1` }).flush(null);
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tourlog/bytour/tour-1` }).flush([]);
+      await promise;
+
+      expect(vm.logs()).toHaveLength(0);
+      expect(vm.errorMessage()).toBeNull();
+
+      vi.restoreAllMocks();
+    });
+
+    it('should not issue any HTTP request when user cancels confirm', async () => {
+      await selectTourWithLog();
+      vi.spyOn(window, 'confirm').mockReturnValue(false);
+
+      await vm.deleteLog(sampleLog);
+
+      // httpTesting.verify() in afterEach asserts no unexpected requests were made
+      expect(vm.errorMessage()).toBeNull();
+
+      vi.restoreAllMocks();
+    });
+  });
 });
