@@ -41,30 +41,26 @@ public class TourService(ITourRepository tourRepository, IMapper mapper, IUserCo
 
     public IEnumerable<TourDomain> SearchTours(string searchText)
     {
-        var dbResults = tourRepository.SearchToursAsync(searchText, userContext.UserId)
-            .ToList()
-            .Select(t => mapper.Map<TourDomain>(t))
-            .ToList();
-
-        if (string.IsNullOrWhiteSpace(searchText)) return dbResults;
-
         var allTours = tourRepository.GetAllTours(userContext.UserId)
             .Select(t => mapper.Map<TourDomain>(t))
             .ToList();
 
-        var computedMatches = allTours.Where(t =>
-            !dbResults.Any(r => r.Id == t.Id) &&
+        if (string.IsNullOrWhiteSpace(searchText)) return allTours;
+
+        return allTours.Where(t =>
+            MatchesDbFields(t, searchText) ||
             MatchesComputedValues(t, searchText));
-
-        return [.. dbResults, .. computedMatches];
     }
 
-    private static bool MatchesComputedValues(TourDomain tour, string searchText)
-    {
-        var text = searchText.ToUpperInvariant();
-        var popularity = tour.FormattedPopularity.ToUpperInvariant();
-        return popularity.Contains(text) ||
-               (tour.IsChildFriendly && "CHILD-FRIENDLY".Contains(text));
-    }
+    private static bool MatchesDbFields(TourDomain tour, string text) =>
+        tour.Name.Contains(text, StringComparison.OrdinalIgnoreCase) ||
+        tour.Description.Contains(text, StringComparison.OrdinalIgnoreCase) ||
+        tour.From.Contains(text, StringComparison.OrdinalIgnoreCase) ||
+        tour.To.Contains(text, StringComparison.OrdinalIgnoreCase) ||
+        tour.Logs.Any(l => l.Comment?.Contains(text, StringComparison.OrdinalIgnoreCase) is true);
+
+    private static bool MatchesComputedValues(TourDomain tour, string text) =>
+        tour.FormattedPopularity.Contains(text, StringComparison.OrdinalIgnoreCase) ||
+        (tour.IsChildFriendly && "Child-friendly".Contains(text, StringComparison.OrdinalIgnoreCase));
 
 }
