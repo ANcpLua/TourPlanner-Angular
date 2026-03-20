@@ -77,6 +77,9 @@ public class PdfReportService : IPdfReportService
             AddTableRow(table, "Distance:", FormatDistance(tour.Distance));
             AddTableRow(table, "Est. Time:", FormatTime(tour.EstimatedTime));
             AddTableRow(table, "Transport:", tour.TransportType);
+            AddTableRow(table, "Popularity:", FormatPopularity(tour.PopularityScore));
+            AddTableRow(table, "Child-friendly:", tour.IsChildFriendly ? "Yes" : "No");
+            AddTableRow(table, "Avg. Rating:", tour.AverageRating?.ToString("N1", CultureInfo.InvariantCulture) ?? "N/A");
         });
     }
 
@@ -85,6 +88,15 @@ public class PdfReportService : IPdfReportService
         table.Cell().Text(label);
         table.Cell().Text(value);
     }
+
+    private static string FormatPopularity(int score) => score switch
+    {
+        >= 4 => "Very popular",
+        3 => "Popular",
+        2 => "Moderately popular",
+        1 => "Less popular",
+        _ => "Not popular"
+    };
 
     private static string FormatDistance(double? distance)
     {
