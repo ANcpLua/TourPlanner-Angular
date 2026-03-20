@@ -117,4 +117,50 @@ describe('RegisterPageComponent', () => {
       expect(registerMock).toHaveBeenCalledWith({ email: 'user@example.com', password: 'secure1' });
     });
   });
+
+  describe('error message display', () => {
+    const errorSignal = signal<string | null>(null);
+
+    beforeEach(async () => {
+      errorSignal.set(null);
+      await TestBed.configureTestingModule({
+        imports: [RegisterPageComponent],
+        providers: [
+          provideRouter([]),
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          { provide: API_BASE_URL, useValue: baseUrl },
+          {
+            provide: AuthViewModel,
+            useValue: {
+              login: vi.fn(),
+              register: vi.fn(),
+              isLoading: signal(false),
+              errorMessage: errorSignal,
+            },
+          },
+        ],
+      }).compileComponents();
+    });
+
+    it('should show error message when vm.errorMessage is set', () => {
+      errorSignal.set('Registration failed. Email may already be in use.');
+
+      const fixture = TestBed.createComponent(RegisterPageComponent);
+      fixture.detectChanges();
+
+      const el = fixture.nativeElement as HTMLElement;
+      const errorEl = el.querySelector('.auth-page__error');
+      expect(errorEl).not.toBeNull();
+      expect(errorEl!.textContent).toContain('Registration failed. Email may already be in use.');
+    });
+
+    it('should not show error message when vm.errorMessage is null', () => {
+      const fixture = TestBed.createComponent(RegisterPageComponent);
+      fixture.detectChanges();
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector('.auth-page__error')).toBeNull();
+    });
+  });
 });

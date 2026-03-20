@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { TourFormComponent } from './tour-form.component';
-import { Tour } from '../models/tour.model';
+import { Tour, TourFormValue } from '../models/tour.model';
 
 describe('TourFormComponent', () => {
   beforeEach(async () => {
@@ -117,5 +117,102 @@ describe('TourFormComponent', () => {
     form.controls['to'].setValue('Berlin');
 
     expect(form.hasError('identicalCities')).toBe(false);
+  });
+
+  it('should emit saveTour on valid submit', () => {
+    const fixture = TestBed.createComponent(TourFormComponent);
+    fixture.detectChanges();
+
+    const form = fixture.componentInstance['form'];
+    form.controls['name'].setValue('My Tour');
+    form.controls['description'].setValue('A nice tour');
+    form.controls['from'].setValue('Vienna');
+    form.controls['to'].setValue('Berlin');
+    form.controls['transportType'].setValue('Car');
+
+    let emittedValue: TourFormValue | undefined;
+    fixture.componentInstance.saveTour.subscribe((v: TourFormValue) => (emittedValue = v));
+
+    fixture.componentInstance['submit']();
+
+    expect(emittedValue).toBeDefined();
+    expect(emittedValue!.name).toBe('My Tour');
+    expect(emittedValue!.from).toBe('Vienna');
+    expect(emittedValue!.to).toBe('Berlin');
+  });
+
+  it('should not emit saveTour and mark touched on invalid submit', () => {
+    const fixture = TestBed.createComponent(TourFormComponent);
+    fixture.detectChanges();
+
+    let emitted = false;
+    fixture.componentInstance.saveTour.subscribe(() => (emitted = true));
+
+    // Leave form empty (invalid)
+    fixture.componentInstance['submit']();
+
+    expect(emitted).toBe(false);
+    expect(fixture.componentInstance['form'].touched).toBe(true);
+  });
+
+  it('should render name required error in template when name is empty and touched', () => {
+    const fixture = TestBed.createComponent(TourFormComponent);
+    fixture.detectChanges();
+
+    const form = fixture.componentInstance['form'];
+    form.controls['name'].setValue('');
+    form.controls['name'].markAsTouched();
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const small = el.querySelector('small');
+    expect(small).not.toBeNull();
+    expect(small!.textContent).toContain('Name is required.');
+  });
+
+  it('should render description required error in template when description is empty and touched', () => {
+    const fixture = TestBed.createComponent(TourFormComponent);
+    fixture.detectChanges();
+
+    const form = fixture.componentInstance['form'];
+    form.controls['description'].setValue('');
+    form.controls['description'].markAsTouched();
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const smalls = el.querySelectorAll('small');
+    const descError = Array.from(smalls).find((s) => s.textContent?.includes('Description is required.'));
+    expect(descError).toBeDefined();
+  });
+
+  it('should render from required error in template when from is empty and touched', () => {
+    const fixture = TestBed.createComponent(TourFormComponent);
+    fixture.detectChanges();
+
+    const form = fixture.componentInstance['form'];
+    form.controls['from'].setValue('');
+    form.controls['from'].markAsTouched();
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const smalls = el.querySelectorAll('small');
+    const fromError = Array.from(smalls).find((s) => s.textContent?.includes('Start city is required.'));
+    expect(fromError).toBeDefined();
+  });
+
+  it('should render identicalCities error message in template', () => {
+    const fixture = TestBed.createComponent(TourFormComponent);
+    fixture.detectChanges();
+
+    const form = fixture.componentInstance['form'];
+    form.controls['from'].setValue('Vienna');
+    form.controls['to'].setValue('Vienna');
+    form.markAsDirty();
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const errorP = el.querySelector('.tour-form__error');
+    expect(errorP).not.toBeNull();
+    expect(errorP!.textContent).toContain('Start and destination must be different.');
   });
 });

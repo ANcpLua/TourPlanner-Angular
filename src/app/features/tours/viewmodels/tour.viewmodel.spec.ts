@@ -268,5 +268,62 @@ describe('TourViewModel', () => {
 
       vi.restoreAllMocks();
     });
+
+    it('should set error message when deleteTour fails', async () => {
+      vi.spyOn(window, 'confirm').mockReturnValue(true);
+
+      const promise = vm.deleteTour(sampleTour);
+
+      await tick();
+      httpTesting.expectOne({ method: 'DELETE', url: `${baseUrl}api/tour/tour-1` }).error(new ProgressEvent('error'));
+      await promise;
+
+      expect(vm.errorMessage()).toBe('Could not delete the selected tour.');
+
+      vi.restoreAllMocks();
+    });
+  });
+
+  it('should return editingTour when editingTourId matches a loaded tour', async () => {
+    const promise = vm.loadTours();
+    httpTesting.expectOne(`${baseUrl}api/tour`).flush([sampleTour]);
+    await promise;
+
+    vm.openEditForm(sampleTour);
+
+    expect(vm.editingTour()).not.toBeNull();
+    expect(vm.editingTour()!.id).toBe('tour-1');
+    expect(vm.editingTour()!.name).toBe('City Walk');
+  });
+
+  it('should return null editingTour when editingTourId is null', () => {
+    expect(vm.editingTour()).toBeNull();
+  });
+
+  it('should return null mapCoordinates when routeInformation is invalid JSON', async () => {
+    const tourWithBadJson: Tour = {
+      ...sampleTour,
+      routeInformation: 'not-valid-json{{{',
+    };
+
+    const promise = vm.loadTours();
+    httpTesting.expectOne(`${baseUrl}api/tour`).flush([tourWithBadJson]);
+    await promise;
+
+    expect(vm.selectedTour()).not.toBeNull();
+    expect(vm.mapCoordinates()).toBeNull();
+  });
+
+  it('should return null mapCoordinates when routeInformation is missing', async () => {
+    const tourNoRoute: Tour = {
+      ...sampleTour,
+      routeInformation: undefined,
+    };
+
+    const promise = vm.loadTours();
+    httpTesting.expectOne(`${baseUrl}api/tour`).flush([tourNoRoute]);
+    await promise;
+
+    expect(vm.mapCoordinates()).toBeNull();
   });
 });
