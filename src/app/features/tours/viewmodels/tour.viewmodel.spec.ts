@@ -105,17 +105,16 @@ describe('TourViewModel', () => {
     expect(vm.selectedTourId()).toBe('tour-1');
   });
 
-  it('should produce TourView with computed properties', async () => {
-    const tourWithLogs = {
+  it('should pass through backend-computed properties', async () => {
+    const tourWithComputedFields: Tour = {
       ...sampleTour,
-      tourLogs: [
-        { comment: 'Easy', difficulty: 1, totalDistance: 100, totalTime: 1, rating: 4 },
-        { comment: 'Fun', difficulty: 2, totalDistance: 200, totalTime: 2, rating: 5 },
-      ],
+      popularity: 'Moderately popular',
+      averageRating: 4.5,
+      isChildFriendly: true,
     };
 
     const promise = vm.loadTours();
-    httpTesting.expectOne(`${baseUrl}api/tour`).flush([tourWithLogs]);
+    httpTesting.expectOne(`${baseUrl}api/tour`).flush([tourWithComputedFields]);
     await promise;
 
     const view = vm.tours()[0];
@@ -124,14 +123,14 @@ describe('TourViewModel', () => {
     expect(view.isChildFriendly).toBe(true);
   });
 
-  it('should produce TourView with no logs as not popular and not child-friendly', async () => {
+  it('should pass through backend-computed properties when absent', async () => {
     const promise = vm.loadTours();
     httpTesting.expectOne(`${baseUrl}api/tour`).flush([sampleTour]);
     await promise;
 
     const view = vm.tours()[0];
-    expect(view.popularity).toBe('Not popular');
-    expect(view.averageRating).toBeNull();
-    expect(view.isChildFriendly).toBe(false);
+    expect(view.popularity).toBeUndefined();
+    expect(view.averageRating).toBeUndefined();
+    expect(view.isChildFriendly).toBeUndefined();
   });
 });

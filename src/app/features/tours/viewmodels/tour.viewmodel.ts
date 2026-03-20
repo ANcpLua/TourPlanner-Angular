@@ -5,7 +5,6 @@ import {
   buildTourForSave,
   getCityCoordinates,
   ResolveRouteRequest,
-  toTourView,
   Tour,
   TourFormValue,
 } from '../models/tour.model';
@@ -22,7 +21,7 @@ export class TourViewModel {
   readonly isFormVisible = signal(false);
   readonly editingTourId = signal<string | null>(null);
 
-  readonly tours = computed(() => this.rawTours().map(toTourView));
+  readonly tours = computed(() => this.rawTours());
 
   readonly selectedTour = computed(
     () => this.tours().find((t) => t.id === this.selectedTourId()) ?? null,

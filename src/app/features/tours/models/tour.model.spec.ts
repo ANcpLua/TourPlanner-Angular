@@ -5,10 +5,7 @@ import {
   createEmptyTourFormValue,
   createTourFormValue,
   EMPTY_GUID,
-  getAverageRating,
   getCityCoordinates,
-  getIsChildFriendly,
-  getPopularity,
   Tour,
 } from './tour.model';
 
@@ -102,97 +99,4 @@ describe('Tour model', () => {
     });
   });
 
-  describe('getPopularity', () => {
-    const baseTour: Tour = {
-      id: '1', name: 'T', description: '', from: 'A', to: 'B', transportType: 'Car',
-    };
-
-    it('should return "Not popular" with no logs', () => {
-      expect(getPopularity(baseTour)).toBe('Not popular');
-      expect(getPopularity({ ...baseTour, tourLogs: [] })).toBe('Not popular');
-    });
-
-    it('should return "Less popular" with 1 log', () => {
-      expect(getPopularity({ ...baseTour, tourLogs: [makeFakeLog()] })).toBe('Less popular');
-    });
-
-    it('should return "Moderately popular" with 2 logs', () => {
-      expect(getPopularity({ ...baseTour, tourLogs: [makeFakeLog(), makeFakeLog()] })).toBe('Moderately popular');
-    });
-
-    it('should return "Popular" with 3 logs', () => {
-      expect(getPopularity({ ...baseTour, tourLogs: Array(3).fill(makeFakeLog()) })).toBe('Popular');
-    });
-
-    it('should return "Very popular" with 4+ logs', () => {
-      expect(getPopularity({ ...baseTour, tourLogs: Array(5).fill(makeFakeLog()) })).toBe('Very popular');
-    });
-  });
-
-  describe('getAverageRating', () => {
-    const baseTour: Tour = {
-      id: '1', name: 'T', description: '', from: 'A', to: 'B', transportType: 'Car',
-    };
-
-    it('should return null with no logs', () => {
-      expect(getAverageRating(baseTour)).toBeNull();
-      expect(getAverageRating({ ...baseTour, tourLogs: [] })).toBeNull();
-    });
-
-    it('should compute average of ratings', () => {
-      const logs = [
-        { ...makeFakeLog(), rating: 4 },
-        { ...makeFakeLog(), rating: 2 },
-      ];
-      expect(getAverageRating({ ...baseTour, tourLogs: logs })).toBe(3);
-    });
-
-    it('should handle single log', () => {
-      const logs = [{ ...makeFakeLog(), rating: 5 }];
-      expect(getAverageRating({ ...baseTour, tourLogs: logs })).toBe(5);
-    });
-  });
-
-  describe('getIsChildFriendly', () => {
-    const baseTour: Tour = {
-      id: '1', name: 'T', description: '', from: 'A', to: 'B', transportType: 'Car',
-    };
-
-    it('should return false with no logs', () => {
-      expect(getIsChildFriendly(baseTour)).toBe(false);
-    });
-
-    it('should return true when all logs have difficulty <= 2 and rating >= 3', () => {
-      const logs = [
-        { ...makeFakeLog(), difficulty: 1, rating: 4 },
-        { ...makeFakeLog(), difficulty: 2, rating: 3 },
-      ];
-      expect(getIsChildFriendly({ ...baseTour, tourLogs: logs })).toBe(true);
-    });
-
-    it('should return false when any log has difficulty > 2', () => {
-      const logs = [
-        { ...makeFakeLog(), difficulty: 1, rating: 4 },
-        { ...makeFakeLog(), difficulty: 3, rating: 4 },
-      ];
-      expect(getIsChildFriendly({ ...baseTour, tourLogs: logs })).toBe(false);
-    });
-
-    it('should return false when any log has rating < 3', () => {
-      const logs = [
-        { ...makeFakeLog(), difficulty: 1, rating: 2 },
-      ];
-      expect(getIsChildFriendly({ ...baseTour, tourLogs: logs })).toBe(false);
-    });
-  });
 });
-
-function makeFakeLog() {
-  return {
-    comment: 'x',
-    difficulty: 2,
-    totalDistance: 100,
-    totalTime: 1,
-    rating: 3,
-  };
-}

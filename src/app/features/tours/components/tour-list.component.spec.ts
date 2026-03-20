@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { TourListComponent } from './tour-list.component';
-import { TourView } from '../models/tour.model';
+import { Tour } from '../models/tour.model';
 
 describe('TourListComponent', () => {
-  const sampleTours: TourView[] = [
+  const sampleTours: Tour[] = [
     {
       id: 'tour-1',
       name: 'City Walk',
@@ -91,8 +91,8 @@ describe('TourListComponent', () => {
     fixture.componentRef.setInput('tours', sampleTours);
     fixture.detectChanges();
 
-    let emitted: TourView | null = null;
-    fixture.componentInstance.selectTour.subscribe((tour: TourView) => (emitted = tour));
+    let emitted: Tour | null = null;
+    fixture.componentInstance.selectTour.subscribe((tour: Tour) => (emitted = tour));
 
     const cardBody = fixture.nativeElement.querySelector('.tour-card__body');
     cardBody.click();
@@ -106,8 +106,8 @@ describe('TourListComponent', () => {
     fixture.componentRef.setInput('tours', sampleTours);
     fixture.detectChanges();
 
-    let emitted: TourView | null = null;
-    fixture.componentInstance.deleteTour.subscribe((tour: TourView) => (emitted = tour));
+    let emitted: Tour | null = null;
+    fixture.componentInstance.deleteTour.subscribe((tour: Tour) => (emitted = tour));
 
     const deleteBtn = fixture.nativeElement.querySelector('.danger');
     deleteBtn.click();

@@ -1,6 +1,6 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Component, input, output } from '@angular/core';
-import { TourView } from '../models/tour.model';
+import { Tour } from '../models/tour.model';
 
 @Component({
   selector: 'app-tour-list',
@@ -9,14 +9,14 @@ import { TourView } from '../models/tour.model';
   styleUrl: './tour-list.component.css',
 })
 export class TourListComponent {
-  readonly tours = input.required<readonly TourView[]>();
+  readonly tours = input.required<readonly Tour[]>();
   readonly selectedTourId = input<string | null>(null);
 
-  readonly selectTour = output<TourView>();
-  readonly editTour = output<TourView>();
-  readonly deleteTour = output<TourView>();
+  readonly selectTour = output<Tour>();
+  readonly editTour = output<Tour>();
+  readonly deleteTour = output<Tour>();
 
-  protected trackTour(_: number, tour: TourView): string {
+  protected trackTour(_: number, tour: Tour): string {
     return tour.id;
   }
 }

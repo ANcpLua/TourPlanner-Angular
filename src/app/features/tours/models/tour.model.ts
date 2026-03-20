@@ -14,6 +14,9 @@ export type Tour = Omit<
   from: string;
   to: string;
   transportType: TransportType;
+  popularity?: string;
+  isChildFriendly?: boolean;
+  averageRating?: number | null;
 };
 
 export interface TourFormValue {
@@ -56,53 +59,6 @@ export function getCityCoordinates(city: string): {
   }
 
   return coordinates;
-}
-
-export function getPopularity(tour: Tour): string {
-  const count = tour.tourLogs?.length ?? 0;
-  switch (true) {
-    case count >= 4: return 'Very popular';
-    case count === 3: return 'Popular';
-    case count === 2: return 'Moderately popular';
-    case count === 1: return 'Less popular';
-    default: return 'Not popular';
-  }
-}
-
-export function getAverageRating(tour: Tour): number | null {
-  const logs = tour.tourLogs;
-  if (!logs || logs.length === 0) return null;
-
-  const ratings = logs
-    .map((l) => Number(l.rating))
-    .filter((r) => !isNaN(r));
-
-  if (ratings.length === 0) return null;
-  return ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
-}
-
-export function getIsChildFriendly(tour: Tour): boolean {
-  const logs = tour.tourLogs;
-  if (!logs || logs.length === 0) return false;
-
-  return logs.every(
-    (l) => Number(l.difficulty) <= 2 && Number(l.rating) >= 3,
-  );
-}
-
-export interface TourView extends Tour {
-  popularity: string;
-  averageRating: number | null;
-  isChildFriendly: boolean;
-}
-
-export function toTourView(tour: Tour): TourView {
-  return {
-    ...tour,
-    popularity: getPopularity(tour),
-    averageRating: getAverageRating(tour),
-    isChildFriendly: getIsChildFriendly(tour),
-  };
 }
 
 export function createEmptyTourFormValue(): TourFormValue {
