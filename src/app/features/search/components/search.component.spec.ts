@@ -47,4 +47,40 @@ describe('SearchComponent', () => {
     expect(vm).toBeTruthy();
     expect(vm.searchText()).toBe('');
   });
+
+  it('should trigger search on Enter keydown', () => {
+    const fixture = TestBed.createComponent(SearchComponent);
+    fixture.detectChanges();
+    const vm = TestBed.inject(SearchViewModel);
+    const searchSpy = vi.spyOn(vm, 'search').mockResolvedValue(undefined);
+
+    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+    expect(searchSpy).toHaveBeenCalledOnce();
+  });
+
+  it('should not trigger search on non-Enter keydown', () => {
+    const fixture = TestBed.createComponent(SearchComponent);
+    fixture.detectChanges();
+    const vm = TestBed.inject(SearchViewModel);
+    const searchSpy = vi.spyOn(vm, 'search').mockResolvedValue(undefined);
+
+    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true }));
+
+    expect(searchSpy).not.toHaveBeenCalled();
+  });
+
+  it('should enable search button when input has text', async () => {
+    const fixture = TestBed.createComponent(SearchComponent);
+    fixture.detectChanges();
+    const vm = TestBed.inject(SearchViewModel);
+
+    vm.searchText.set('Vienna');
+    fixture.detectChanges();
+
+    const btn = fixture.nativeElement.querySelector('.search__bar button') as HTMLButtonElement;
+    expect(btn.disabled).toBe(false);
+  });
 });

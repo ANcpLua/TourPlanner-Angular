@@ -50,6 +50,35 @@ describe('SearchViewModel', () => {
     expect(vm.hasSearched()).toBe(false);
   });
 
+  it('should set empty results and mark hasSearched on API error', async () => {
+    vm.searchText.set('Vienna');
+    const promise = vm.search();
+    httpTesting.expectOne(`${baseUrl}api/tour/search/Vienna`).error(new ProgressEvent('error'));
+    await promise;
+
+    expect(vm.results()).toEqual([]);
+    expect(vm.hasSearched()).toBe(true);
+  });
+
+  it('should allow re-search after clear', async () => {
+    vm.searchText.set('Vienna');
+    const p1 = vm.search();
+    httpTesting.expectOne(`${baseUrl}api/tour/search/Vienna`).flush([{ id: '1', name: 'T', from: 'A', to: 'B' }]);
+    await p1;
+
+    vm.clear();
+    expect(vm.hasSearched()).toBe(false);
+    expect(vm.results()).toEqual([]);
+
+    vm.searchText.set('Berlin');
+    const p2 = vm.search();
+    httpTesting.expectOne(`${baseUrl}api/tour/search/Berlin`).flush([{ id: '2', name: 'B', from: 'C', to: 'D' }]);
+    await p2;
+
+    expect(vm.hasSearched()).toBe(true);
+    expect(vm.results()).toHaveLength(1);
+  });
+
   it('should clear search state', () => {
     vm.searchText.set('test');
     vm.hasSearched.set(true);
