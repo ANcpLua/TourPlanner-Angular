@@ -39,7 +39,7 @@ public class TourService(ITourRepository tourRepository, IMapper mapper) : ITour
         return tourRepository.DeleteTourAsync(id, cancellationToken);
     }
 
-    public IQueryable<TourDomain> SearchTours(string searchText)
+    public IEnumerable<TourDomain> SearchTours(string searchText)
     {
         var tourPersistence = tourRepository.SearchToursAsync(searchText);
         return tourPersistence.Select(t => mapper.Map<TourDomain>(t));
