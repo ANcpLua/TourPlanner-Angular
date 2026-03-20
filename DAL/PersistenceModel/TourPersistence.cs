@@ -21,4 +21,5 @@ public class TourPersistence
     public string? RouteInformation { get; set; }
     public double? Distance { get; set; }
     public double? EstimatedTime { get; set; }
+    [Required] public required string UserId { get; set; }
 }

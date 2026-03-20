@@ -17,7 +17,7 @@ public class PostgreContextModule(IConfiguration configuration) : Autofac.Module
             {
                 var connectionString = configuration.GetConnectionString("TourPlannerDatabase");
                 var dbOptions = new DbContextOptionsBuilder<TourPlannerContext>()
-                    .UseNpgsql(connectionString)
+                    .UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.EnableRetryOnFailure())
                     .Options;
                 return new TourPlannerContext(dbOptions);
             })

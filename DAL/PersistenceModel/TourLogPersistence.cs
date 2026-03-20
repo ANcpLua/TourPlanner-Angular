@@ -18,6 +18,7 @@ public class TourLogPersistence
     public double? TotalTime { get; set; }
     public double? Rating { get; set; }
     public Guid TourPersistenceId { get; set; }
+    [Required] public required string UserId { get; set; }
 
     [ForeignKey("TourPersistenceId")]
     public TourPersistence? TourPersistence { get; set; }

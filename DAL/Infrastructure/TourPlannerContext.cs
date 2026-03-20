@@ -1,16 +1,20 @@
 using DAL.PersistenceModel;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Infrastructure;
 
-public class TourPlannerContext(DbContextOptions<TourPlannerContext> options) : DbContext(options)
+public class TourPlannerContext(DbContextOptions<TourPlannerContext> options) : IdentityDbContext<IdentityUser>(options)
 {
     public DbSet<TourPersistence> ToursPersistence { get; set; } = null!;
     public DbSet<TourLogPersistence> TourLogsPersistence { get; set; } = null!;
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        modelBuilder.Entity<TourPersistence>(static entity =>
+        base.OnModelCreating(builder);
+
+        builder.Entity<TourPersistence>(static entity =>
         {
             entity.ToTable("Tours");
             entity.HasKey(static t => t.Id);
@@ -23,6 +27,7 @@ public class TourPlannerContext(DbContextOptions<TourPlannerContext> options) : 
             entity.Property(static t => t.TransportType).HasMaxLength(50);
             entity.Property(static t => t.ImagePath).HasMaxLength(10000);
             entity.Property(static t => t.RouteInformation).HasMaxLength(30000);
+            entity.Property(static t => t.UserId).IsRequired().HasMaxLength(450);
 
             entity
                 .HasMany(static t => t.TourLogPersistence)
@@ -30,7 +35,7 @@ public class TourPlannerContext(DbContextOptions<TourPlannerContext> options) : 
                 .HasForeignKey(static tl => tl.TourPersistenceId);
         });
 
-        modelBuilder.Entity<TourLogPersistence>(static entity =>
+        builder.Entity<TourLogPersistence>(static entity =>
         {
             entity.ToTable("TourLogs");
             entity.HasKey(static tl => tl.Id);
@@ -45,6 +50,7 @@ public class TourPlannerContext(DbContextOptions<TourPlannerContext> options) : 
             entity.Property(static tl => tl.Rating);
             entity.Property(static tl => tl.TotalDistance).HasColumnType("decimal(18,2)");
             entity.Property(static tl => tl.TotalTime);
+            entity.Property(static tl => tl.UserId).IsRequired().HasMaxLength(450);
 
             entity
                 .HasOne(static tl => tl.TourPersistence)
@@ -52,16 +58,5 @@ public class TourPlannerContext(DbContextOptions<TourPlannerContext> options) : 
                 .HasForeignKey(static tl => tl.TourPersistenceId);
         });
 
-        modelBuilder.Entity<TourPersistence>().HasData(
-            new TourPersistence
-            {
-                Id = Guid.Parse("a1b2c3d4-e5f6-7890-abcd-ef1234567890"),
-                Name = "Sample Tour",
-                Description = "A sample tour for testing",
-                From = "Vienna",
-                To = "Salzburg",
-                TransportType = "DRIVING"
-            }
-        );
     }
 }
