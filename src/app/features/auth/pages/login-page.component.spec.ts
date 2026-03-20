@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { API_BASE_URL } from '../../../core/config/api-base-url.token';
+import { AuthViewModel } from '../viewmodels/auth.viewmodel';
 import { LoginPageComponent } from './login-page.component';
 
 describe('LoginPageComponent', () => {
@@ -76,5 +78,57 @@ describe('LoginPageComponent', () => {
     const el = fixture.nativeElement as HTMLElement;
     const link = el.querySelector('a[href="/register"]');
     expect(link).not.toBeNull();
+  });
+
+  it('should mark form as touched on invalid submit', () => {
+    const fixture = TestBed.createComponent(LoginPageComponent);
+    fixture.detectChanges();
+
+    const form = fixture.componentInstance['form'];
+    // Form is empty (invalid) — no values set
+    fixture.componentInstance['submit']();
+
+    expect(form.touched).toBe(true);
+  });
+
+  describe('with mocked AuthViewModel', () => {
+    const loginMock = vi.fn();
+
+    beforeEach(async () => {
+      loginMock.mockResolvedValue(undefined);
+      await TestBed.configureTestingModule({
+        imports: [LoginPageComponent],
+        providers: [
+          provideRouter([]),
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          { provide: API_BASE_URL, useValue: baseUrl },
+          {
+            provide: AuthViewModel,
+            useValue: {
+              login: loginMock,
+              register: vi.fn(),
+              isLoading: signal(false),
+              errorMessage: signal(null),
+            },
+          },
+        ],
+      }).compileComponents();
+    });
+
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should call vm.login with form values on valid submit', () => {
+      const fixture = TestBed.createComponent(LoginPageComponent);
+      fixture.detectChanges();
+
+      fixture.componentInstance['form'].setValue({ email: 'user@example.com', password: 'secret' });
+      fixture.componentInstance['submit']();
+
+      expect(loginMock).toHaveBeenCalledOnce();
+      expect(loginMock).toHaveBeenCalledWith({ email: 'user@example.com', password: 'secret' });
+    });
   });
 });

@@ -109,4 +109,53 @@ describe('TourLogFormComponent', () => {
     expect(submitBtn.disabled).toBe(true);
     expect(submitBtn.textContent).toContain('Saving');
   });
+
+  it('should show required error for a touched empty comment field', () => {
+    const fixture = TestBed.createComponent(TourLogFormComponent);
+    fixture.componentRef.setInput('tourId', 'tour-1');
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    const commentControl = component['form'].controls['comment'];
+    commentControl.setValue('');
+    commentControl.markAsTouched();
+
+    expect(component['showError']('comment', 'required')).toBe(true);
+  });
+
+  it('should not show required error for an untouched comment field', () => {
+    const fixture = TestBed.createComponent(TourLogFormComponent);
+    fixture.componentRef.setInput('tourId', 'tour-1');
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    // comment is empty by default but untouched — error must stay hidden
+    expect(component['showError']('comment', 'required')).toBe(false);
+  });
+
+  it('should show min error for difficulty below 1 when field is touched', () => {
+    const fixture = TestBed.createComponent(TourLogFormComponent);
+    fixture.componentRef.setInput('tourId', 'tour-1');
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    const difficultyControl = component['form'].controls['difficulty'];
+    difficultyControl.setValue(0);
+    difficultyControl.markAsTouched();
+
+    expect(component['showError']('difficulty', 'min')).toBe(true);
+  });
+
+  it('should show max error for difficulty above 5 when field is touched', () => {
+    const fixture = TestBed.createComponent(TourLogFormComponent);
+    fixture.componentRef.setInput('tourId', 'tour-1');
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    const difficultyControl = component['form'].controls['difficulty'];
+    difficultyControl.setValue(6);
+    difficultyControl.markAsTouched();
+
+    expect(component['showError']('difficulty', 'max')).toBe(true);
+  });
 });
