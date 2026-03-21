@@ -49,7 +49,10 @@ public static class AuthEndpoints
             return Results.Problem("Invalid email or password.", statusCode: StatusCodes.Status401Unauthorized);
 
         var user = await userManager.FindByEmailAsync(request.Email);
-        return Results.Ok(new UserInfo { UserId = user!.Id, Email = user.Email! });
+        if (user is null)
+            return Results.Problem("User not found after login.", statusCode: StatusCodes.Status500InternalServerError);
+
+        return Results.Ok(new UserInfo { UserId = user.Id, Email = user.Email ?? request.Email });
     }
 
     internal static async Task<IResult> LogoutAsync(SignInManager<IdentityUser> signInManager)

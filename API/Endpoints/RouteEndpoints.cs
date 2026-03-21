@@ -19,8 +19,8 @@ public static class RouteEndpoints
         CancellationToken cancellationToken)
     {
         var (distance, duration) = await routeService.ResolveRouteAsync(
-            (request.FromLatitude!.Value, request.FromLongitude!.Value),
-            (request.ToLatitude!.Value, request.ToLongitude!.Value),
+            (request.FromLatitude, request.FromLongitude),
+            (request.ToLatitude, request.ToLongitude),
             request.TransportType,
             cancellationToken
         );
