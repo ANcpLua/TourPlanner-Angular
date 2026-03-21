@@ -8,8 +8,7 @@ coverage:
         target: auto
 
 ignore:
-  - "**/*.spec.ts"
-  - "**/*.html"
-  - "src/main.ts"
   - "src/app/app.config.ts"
   - "src/app/app.routes.ts"
+  - "src/app/core/api/generated/**"
+  - "src/app/**/models/**"

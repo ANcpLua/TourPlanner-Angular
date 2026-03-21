@@ -30,7 +30,11 @@ jobs:
           npx ng test --coverage
           --coverage-reporters=cobertura
           --coverage-reporters=text-summary
-          --coverage-include=src/app/**/*.ts
+          --coverage-include='src/app/**/*.ts'
+          --coverage-exclude='src/app/app.config.ts'
+          --coverage-exclude='src/app/app.routes.ts'
+          --coverage-exclude='src/app/core/api/generated/**'
+          --coverage-exclude='src/app/**/models/**'
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
