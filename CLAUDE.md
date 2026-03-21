@@ -1,0 +1,1 @@
+../TourPlanner/CLAUDE.md
