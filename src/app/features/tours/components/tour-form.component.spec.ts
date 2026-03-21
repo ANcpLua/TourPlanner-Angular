@@ -200,6 +200,21 @@ describe('TourFormComponent', () => {
     expect(fromError).toBeDefined();
   });
 
+  it('should render to required error in template when to is empty and touched', () => {
+    const fixture = TestBed.createComponent(TourFormComponent);
+    fixture.detectChanges();
+
+    const form = fixture.componentInstance['form'];
+    form.controls['to'].setValue('');
+    form.controls['to'].markAsTouched();
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const smalls = el.querySelectorAll('small');
+    const toError = Array.from(smalls).find((s) => s.textContent?.includes('Destination city is required.'));
+    expect(toError).toBeDefined();
+  });
+
   it('should render identicalCities error message in template', () => {
     const fixture = TestBed.createComponent(TourFormComponent);
     fixture.detectChanges();
