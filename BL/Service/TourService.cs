@@ -39,28 +39,9 @@ public class TourService(ITourRepository tourRepository, IMapper mapper, IUserCo
         return tourRepository.DeleteTourAsync(id, userContext.UserId, cancellationToken);
     }
 
-    public IEnumerable<TourDomain> SearchTours(string searchText)
+    public IQueryable<TourDomain> SearchTours(string searchText)
     {
-        var allTours = tourRepository.GetAllTours(userContext.UserId)
-            .Select(t => mapper.Map<TourDomain>(t))
-            .ToList();
-
-        if (string.IsNullOrWhiteSpace(searchText)) return allTours;
-
-        return allTours.Where(t =>
-            MatchesDbFields(t, searchText) ||
-            MatchesComputedValues(t, searchText));
+        var tourPersistence = tourRepository.SearchToursAsync(searchText, userContext.UserId);
+        return tourPersistence.Select(t => mapper.Map<TourDomain>(t));
     }
-
-    private static bool MatchesDbFields(TourDomain tour, string text) =>
-        tour.Name.Contains(text, StringComparison.OrdinalIgnoreCase) ||
-        tour.Description.Contains(text, StringComparison.OrdinalIgnoreCase) ||
-        tour.From.Contains(text, StringComparison.OrdinalIgnoreCase) ||
-        tour.To.Contains(text, StringComparison.OrdinalIgnoreCase) ||
-        tour.Logs.Any(l => l.Comment?.Contains(text, StringComparison.OrdinalIgnoreCase) is true);
-
-    private static bool MatchesComputedValues(TourDomain tour, string text) =>
-        tour.FormattedPopularity.Contains(text, StringComparison.OrdinalIgnoreCase) ||
-        (tour.IsChildFriendly && "Child-friendly".Contains(text, StringComparison.OrdinalIgnoreCase));
-
 }

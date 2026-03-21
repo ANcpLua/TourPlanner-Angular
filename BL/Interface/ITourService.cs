@@ -9,5 +9,5 @@ public interface ITourService
     TourDomain? GetTourById(Guid id);
     Task<TourDomain> UpdateTourAsync(TourDomain tour, CancellationToken cancellationToken = default);
     Task DeleteTourAsync(Guid id, CancellationToken cancellationToken = default);
-    IEnumerable<TourDomain> SearchTours(string searchText);
+    IQueryable<TourDomain> SearchTours(string searchText);
 }

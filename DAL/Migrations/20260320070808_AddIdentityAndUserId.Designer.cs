@@ -12,13 +12,12 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     [DbContext(typeof(TourPlannerContext))]
-    [Migration("20260320062327_AddIdentityAndUserOwnership")]
-    partial class AddIdentityAndUserOwnership
+    [Migration("20260320070808_AddIdentityAndUserId")]
+    partial class AddIdentityAndUserId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
-#pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
@@ -62,6 +61,8 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("TourPersistenceId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TourLogs", (string)null);
                 });
@@ -117,6 +118,8 @@ namespace DAL.Migrations
                         .HasColumnType("character varying(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Tours", (string)null);
                 });
@@ -383,7 +386,6 @@ namespace DAL.Migrations
                 {
                     b.Navigation("TourLogPersistence");
                 });
-#pragma warning restore 612, 618
         }
     }
 }

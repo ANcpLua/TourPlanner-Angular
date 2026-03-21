@@ -4,13 +4,11 @@ using BL.DomainModel;
 using BL.Interface;
 using Contracts.Tours;
 using MapsterMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [ApiController]
-[Authorize]
 [Route("api/tour")]
 public class TourController(ITourService tourService, IMapper mapper) : ControllerBase
 {
@@ -40,8 +38,7 @@ public class TourController(ITourService tourService, IMapper mapper) : Controll
     [ProducesResponseType(typeof(TourDto), (int)HttpStatusCode.OK)]
     public ActionResult<TourDto> GetTourById(Guid id)
     {
-        var tour = tourService.GetTourById(id);
-        if (tour is null) return NotFound();
+        if (tourService.GetTourById(id) is not { } tour) return NotFound();
         return Ok(mapper.Map<TourDto>(tour));
     }
 

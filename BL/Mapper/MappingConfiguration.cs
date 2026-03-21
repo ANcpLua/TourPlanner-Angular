@@ -27,9 +27,7 @@ public static class MappingConfiguration
             .NewConfig<TourDomain, TourPersistence>()
             .Map(static dest => dest.TourLogPersistence, static src => src.Logs);
 
-        config.NewConfig<TourDomain, TourDto>()
-            .Map(static dest => dest.TourLogs, static src => src.Logs)
-            .Map(static dest => dest.Popularity, static src => src.FormattedPopularity);
+        config.NewConfig<TourDomain, TourDto>().Map(static dest => dest.TourLogs, static src => src.Logs);
 
         config.NewConfig<TourDto, TourDomain>().Map(static dest => dest.Logs, static src => src.TourLogs);
     }

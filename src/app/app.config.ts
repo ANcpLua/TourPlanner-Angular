@@ -10,6 +10,6 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideRouter(routes),
-    { provide: API_BASE_URL, useValue: '/' },
+    { provide: API_BASE_URL, useFactory: () => location.origin + '/' },
   ]
 };

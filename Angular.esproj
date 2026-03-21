@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.56">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+    </PropertyGroup>
+
+    <Target Name="NpmInstall" BeforeTargets="Build" Condition="!Exists('node_modules')">
+        <Exec Command="npm ci" WorkingDirectory="$(MSBuildProjectDirectory)"/>
+    </Target>
+
+    <Target Name="NgBuild" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+        <Exec Command="npx ng build" WorkingDirectory="$(MSBuildProjectDirectory)"/>
+    </Target>
+
+</Project>

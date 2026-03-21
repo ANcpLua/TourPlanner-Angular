@@ -1,0 +1,10 @@
+{
+  "project_anchor": "/Users/ancplua/swen2-tourplanner-angular",
+  "scopes": [
+    "src/app/**/*.ts,BL/**/*.cs,DAL/**/*.cs,API/**/*.cs,Contracts/**/*.cs",
+    "src/app/**/*.ts,BL/**/*.cs,DAL/**/*.cs,API/**/*.cs,Contracts/**/*.cs",
+    "src/app/**/*.ts,BL/**/*.cs,DAL/**/*.cs,API/**/*.cs,Contracts/**/*.cs",
+    "src/app/**/*.ts,BL/**/*.cs,DAL/**/*.cs,API/**/*.cs,Contracts/**/*.cs"
+  ],
+  "project_root": "/Users/ancplua/swen2-tourplanner-angular"
+}

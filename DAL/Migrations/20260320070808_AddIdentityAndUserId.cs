@@ -7,28 +7,28 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIdentityAndUserOwnership : Migration
+    public partial class AddIdentityAndUserId : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
-                columns: table => new
+                columns: static table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
                 },
-                constraints: table =>
+                constraints: static table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                    table.PrimaryKey("PK_AspNetRoles", static x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
-                columns: table => new
+                columns: static table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -46,16 +46,17 @@ namespace DAL.Migrations
                     LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
                 },
-                constraints: table =>
+                constraints: static table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_AspNetUsers", static x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Tours",
-                columns: table => new
+                columns: static table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: false),
                     Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     From = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
@@ -64,17 +65,16 @@ namespace DAL.Migrations
                     ImagePath = table.Column<string>(type: "character varying(10000)", maxLength: 10000, nullable: true),
                     RouteInformation = table.Column<string>(type: "character varying(30000)", maxLength: 30000, nullable: true),
                     Distance = table.Column<double>(type: "numeric(18,2)", nullable: true),
-                    EstimatedTime = table.Column<double>(type: "double precision", nullable: true),
-                    UserId = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: false)
+                    EstimatedTime = table.Column<double>(type: "double precision", nullable: true)
                 },
-                constraints: table =>
+                constraints: static table =>
                 {
-                    table.PrimaryKey("PK_Tours", x => x.Id);
+                    table.PrimaryKey("PK_Tours", static x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
-                columns: table => new
+                columns: static table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
@@ -82,12 +82,12 @@ namespace DAL.Migrations
                     ClaimType = table.Column<string>(type: "text", nullable: true),
                     ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
-                constraints: table =>
+                constraints: static table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.PrimaryKey("PK_AspNetRoleClaims", static x => x.Id);
                     table.ForeignKey(
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
+                        column: static x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -95,7 +95,7 @@ namespace DAL.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
-                columns: table => new
+                columns: static table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
@@ -103,12 +103,12 @@ namespace DAL.Migrations
                     ClaimType = table.Column<string>(type: "text", nullable: true),
                     ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
-                constraints: table =>
+                constraints: static table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.PrimaryKey("PK_AspNetUserClaims", static x => x.Id);
                     table.ForeignKey(
                         name: "FK_AspNetUserClaims_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        column: static x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -116,19 +116,19 @@ namespace DAL.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
-                columns: table => new
+                columns: static table => new
                 {
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     ProviderKey = table.Column<string>(type: "text", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<string>(type: "text", nullable: false)
                 },
-                constraints: table =>
+                constraints: static table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.PrimaryKey("PK_AspNetUserLogins", static x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        column: static x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -136,23 +136,23 @@ namespace DAL.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
-                columns: table => new
+                columns: static table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
                     RoleId = table.Column<string>(type: "text", nullable: false)
                 },
-                constraints: table =>
+                constraints: static table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.PrimaryKey("PK_AspNetUserRoles", static x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
+                        column: static x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        column: static x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -160,19 +160,19 @@ namespace DAL.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
-                columns: table => new
+                columns: static table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: true)
                 },
-                constraints: table =>
+                constraints: static table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.PrimaryKey("PK_AspNetUserTokens", static x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        column: static x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -180,24 +180,24 @@ namespace DAL.Migrations
 
             migrationBuilder.CreateTable(
                 name: "TourLogs",
-                columns: table => new
+                columns: static table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: false),
                     DateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Comment = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     Difficulty = table.Column<double>(type: "double precision", nullable: true),
                     TotalDistance = table.Column<double>(type: "numeric(18,2)", nullable: true),
                     TotalTime = table.Column<double>(type: "double precision", nullable: true),
                     Rating = table.Column<double>(type: "double precision", nullable: true),
-                    TourPersistenceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: false)
+                    TourPersistenceId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
-                constraints: table =>
+                constraints: static table =>
                 {
-                    table.PrimaryKey("PK_TourLogs", x => x.Id);
+                    table.PrimaryKey("PK_TourLogs", static x => x.Id);
                     table.ForeignKey(
                         name: "FK_TourLogs_Tours_TourPersistenceId",
-                        column: x => x.TourPersistenceId,
+                        column: static x => x.TourPersistenceId,
                         principalTable: "Tours",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -244,6 +244,16 @@ namespace DAL.Migrations
                 name: "IX_TourLogs_TourPersistenceId",
                 table: "TourLogs",
                 column: "TourPersistenceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TourLogs_UserId",
+                table: "TourLogs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tours_UserId",
+                table: "Tours",
+                column: "UserId");
         }
 
         /// <inheritdoc />

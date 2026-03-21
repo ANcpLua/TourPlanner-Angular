@@ -1,59 +1,93 @@
-# Swen2TourplannerAngular
+# TourPlanner (Angular)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.2.
+SWEN2 2026 -- Tour planning application with .NET 10 backend and Angular 21 frontend.
 
-## Development server
+## Quick Start (Docker)
 
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Requires Docker or OrbStack.
 
 ```bash
-ng generate component component-name
+docker compose up -d
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+| Service  | URL                          |
+|----------|------------------------------|
+| Frontend | http://localhost:7226         |
+| API      | http://localhost:7102         |
+| pgAdmin  | http://localhost:5050         |
+| Health   | http://localhost:7102/health  |
+
+pgAdmin login: `admin@admin.com` / `admin`
+
+To stop:
 
 ```bash
-ng generate --help
+docker compose down
 ```
 
-## Building
+### Port conflicts
 
-To build the project run:
+If any port is already in use, copy the example env file and adjust:
 
 ```bash
-ng build
+cp .env.example .env
+# edit .env, then:
+docker compose up -d
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Local Development
 
-## Running unit tests
+### Prerequisites
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+- Node 22.x (see `.nvmrc`)
+- npm 10.x
+- .NET SDK 10.0
+- Docker or OrbStack (for PostgreSQL)
+
+### Steps
+
+1. Start the database:
 
 ```bash
-ng test
+docker compose up -d postgres
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+2. Start the API:
 
 ```bash
-ng e2e
+dotnet run --project API/API.csproj
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+3. Install frontend dependencies and start (separate terminal):
 
-## Additional Resources
+```bash
+npm ci
+npm start
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Open http://localhost:7226.
+
+## Build
+
+```bash
+dotnet build API/API.csproj
+npm run build
+```
+
+## Tests
+
+```bash
+npm test
+```
+
+## Architecture
+
+Same backend as the Blazor variant. The Angular frontend demonstrates that the UI layer is interchangeable when the API contract is stable.
+
+| Layer      | Responsibility                        |
+|------------|---------------------------------------|
+| Angular    | Components, ViewModels, routing       |
+| API        | HTTP endpoints, transport validation  |
+| BL         | Business rules, orchestration         |
+| DAL        | Persistence, external service access  |
+| Contracts  | Shared DTOs                           |

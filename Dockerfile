@@ -1,31 +1,37 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS api-build
 WORKDIR /src
 
-COPY *.sln ./
+COPY Directory.Packages.props Directory.Build.props Version.props ./
 COPY API/*.csproj API/
 COPY BL/*.csproj BL/
 COPY DAL/*.csproj DAL/
-COPY UI/*.csproj UI/
+COPY Contracts/*.csproj Contracts/
 
 RUN dotnet restore "API/API.csproj"
-RUN dotnet restore "UI/UI.csproj"
 
-COPY . .
+COPY API/ API/
+COPY BL/ BL/
+COPY DAL/ DAL/
+COPY Contracts/ Contracts/
 
 RUN dotnet publish "API/API.csproj" -c Release -o /app/api/publish
-RUN dotnet publish "UI/UI.csproj" -c Release -o /app/ui/publish \
-    --no-restore \
-    /p:ServiceWorkerForce=true
+
+FROM node:22-alpine AS ui-build
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY src/ src/
+COPY public/ public/
+COPY angular.json tsconfig.json tsconfig.app.json ./
+
+RUN npx ng build --configuration production
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS api
 WORKDIR /app
 
-COPY --from=build /app/api/publish ./
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        libgdiplus && \
-    rm -rf /var/lib/apt/lists/*
+COPY --from=api-build /app/api/publish ./
 
 ENV ASPNETCORE_URLS=http://+:80
 ENV ASPNETCORE_ENVIRONMENT=Production
@@ -35,13 +41,7 @@ ENTRYPOINT ["dotnet", "API.dll"]
 FROM nginx:alpine AS ui
 WORKDIR /usr/share/nginx/html
 
-COPY --from=build /app/ui/publish/wwwroot ./
+COPY --from=ui-build /app/dist/swen2-tourplanner-angular/browser ./
 COPY nginx.conf /etc/nginx/nginx.conf
-
-RUN mkdir -p js && \
-    touch service-worker.published.js && \
-    touch service-worker.js && \
-    chown -R nginx:nginx /usr/share/nginx/html && \
-    chmod -R 755 /usr/share/nginx/html
 
 CMD ["nginx", "-g", "daemon off;"]

@@ -1,6 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http.HttpResults;
+using System.Security.Claims;
+using Contracts.Auth;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints;
 
@@ -9,65 +10,63 @@ public static class AuthEndpoints
     public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var auth = endpoints.MapGroup("/api/auth").WithTags("Auth");
-        auth.MapPost("/register", Register);
-        auth.MapPost("/login", Login);
-        auth.MapPost("/logout", Logout).RequireAuthorization();
-        auth.MapGet("/me", Me).RequireAuthorization();
+        auth.MapPost("/register", RegisterAsync).AllowAnonymous();
+        auth.MapPost("/login", LoginAsync).AllowAnonymous();
+        auth.MapPost("/logout", LogoutAsync);
+        auth.MapGet("/me", GetCurrentUser);
         return endpoints;
     }
 
-    private static async Task<Results<Ok, ValidationProblem>> Register(
-        RegisterRequest request,
-        UserManager<IdentityUser> userManager)
+    internal static async Task<IResult> RegisterAsync(
+        [FromBody] RegisterRequest request,
+        UserManager<IdentityUser> userManager,
+        SignInManager<IdentityUser> signInManager)
     {
         var user = new IdentityUser { UserName = request.Email, Email = request.Email };
         var result = await userManager.CreateAsync(user, request.Password);
 
-        if (result.Succeeded) return TypedResults.Ok();
+        if (!result.Succeeded)
+        {
+            return Results.ValidationProblem(
+                result.Errors.GroupBy(static e => e.Code).ToDictionary(
+                    static g => g.Key,
+                    static g => g.Select(static e => e.Description).ToArray()));
+        }
 
-        var errors = result.Errors
-            .GroupBy(static e => e.Code)
-            .ToDictionary(static g => g.Key, static g => g.Select(static e => e.Description).ToArray());
-
-        return TypedResults.ValidationProblem(errors);
+        await signInManager.SignInAsync(user, isPersistent: true);
+        return Results.Ok(new UserInfo { UserId = user.Id, Email = user.Email });
     }
 
-    private static async Task<Results<Ok<UserInfo>, UnauthorizedHttpResult>> Login(
-        LoginRequest request,
+    internal static async Task<IResult> LoginAsync(
+        [FromBody] LoginRequest request,
         SignInManager<IdentityUser> signInManager,
         UserManager<IdentityUser> userManager)
     {
         var result = await signInManager.PasswordSignInAsync(
             request.Email, request.Password, isPersistent: true, lockoutOnFailure: false);
 
-        if (!result.Succeeded) return TypedResults.Unauthorized();
+        if (!result.Succeeded)
+            return Results.Problem("Invalid email or password.", statusCode: StatusCodes.Status401Unauthorized);
 
         var user = await userManager.FindByEmailAsync(request.Email);
-        return TypedResults.Ok(new UserInfo(user!.Id, user.Email!));
+        return Results.Ok(new UserInfo { UserId = user!.Id, Email = user.Email! });
     }
 
-    private static async Task<Ok> Logout(SignInManager<IdentityUser> signInManager)
+    internal static async Task<IResult> LogoutAsync(SignInManager<IdentityUser> signInManager)
     {
         await signInManager.SignOutAsync();
-        return TypedResults.Ok();
+        return Results.Ok();
     }
 
-    private static async Task<Results<Ok<UserInfo>, UnauthorizedHttpResult>> Me(
-        HttpContext httpContext,
-        UserManager<IdentityUser> userManager)
+    internal static IResult GetCurrentUser(HttpContext httpContext)
     {
-        var user = await userManager.GetUserAsync(httpContext.User);
-        if (user is null) return TypedResults.Unauthorized();
-        return TypedResults.Ok(new UserInfo(user.Id, user.Email!));
+        var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var email = httpContext.User.FindFirstValue(ClaimTypes.Email)
+                    ?? httpContext.User.FindFirstValue(ClaimTypes.Name);
+
+        if (userId is null || email is null)
+            return Results.Problem("User not found.", statusCode: StatusCodes.Status401Unauthorized);
+
+        return Results.Ok(new UserInfo { UserId = userId, Email = email });
     }
 }
-
-public sealed record RegisterRequest(
-    [Required] string Email,
-    [Required] string Password);
-
-public sealed record LoginRequest(
-    [Required] string Email,
-    [Required] string Password);
-
-public sealed record UserInfo(string Id, string Email);
