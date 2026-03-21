@@ -77,6 +77,13 @@ describe('TourLogViewModel', () => {
     expect(vm.errorMessage()).toBe('Could not load tour logs.');
   });
 
+  it('should return early without HTTP call when selectedTourId is null', async () => {
+    await vm.loadLogs();
+
+    httpTesting.expectNone(`${baseUrl}api/tourlog/bytour/`);
+    expect(vm.isLoading()).toBe(false);
+  });
+
   it('should clear logs when tour deselected', async () => {
     await vm.selectTour(null);
 

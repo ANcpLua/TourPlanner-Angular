@@ -132,6 +132,56 @@ describe('LoginPageComponent', () => {
       expect(loginMock).toHaveBeenCalledOnce();
       expect(loginMock).toHaveBeenCalledWith({ email: 'user@example.com', password: 'secret' });
     });
+
+    it('should show "Login" text when isLoading is false', () => {
+      const fixture = TestBed.createComponent(LoginPageComponent);
+      fixture.detectChanges();
+
+      const button = fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
+      expect(button.textContent!.trim()).toBe('Login');
+    });
+  });
+
+  describe('loading state', () => {
+    const isLoadingSignal = signal(true);
+
+    beforeEach(async () => {
+      isLoadingSignal.set(true);
+      await TestBed.configureTestingModule({
+        imports: [LoginPageComponent],
+        providers: [
+          provideRouter([]),
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          { provide: API_BASE_URL, useValue: baseUrl },
+          {
+            provide: AuthViewModel,
+            useValue: {
+              login: vi.fn(),
+              register: vi.fn(),
+              isLoading: isLoadingSignal,
+              errorMessage: signal(null),
+            },
+          },
+        ],
+      }).compileComponents();
+    });
+
+    it('should show "Logging in..." text when isLoading is true', () => {
+      const fixture = TestBed.createComponent(LoginPageComponent);
+      fixture.detectChanges();
+
+      const button = fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
+      expect(button.textContent!.trim()).toBe('Logging in...');
+    });
+
+    it('should disable submit button when isLoading is true', () => {
+      const fixture = TestBed.createComponent(LoginPageComponent);
+      fixture.detectChanges();
+
+      const button = fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
+      expect(button.disabled).toBe(true);
+    });
   });
 
   describe('error message display', () => {

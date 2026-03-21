@@ -118,6 +118,56 @@ describe('RegisterPageComponent', () => {
       expect(registerMock).toHaveBeenCalledOnce();
       expect(registerMock).toHaveBeenCalledWith({ email: 'user@example.com', password: 'secure1' });
     });
+
+    it('should show "Register" text when isLoading is false', () => {
+      const fixture = TestBed.createComponent(RegisterPageComponent);
+      fixture.detectChanges();
+
+      const button = fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
+      expect(button.textContent!.trim()).toBe('Register');
+    });
+  });
+
+  describe('loading state', () => {
+    const isLoadingSignal = signal(true);
+
+    beforeEach(async () => {
+      isLoadingSignal.set(true);
+      await TestBed.configureTestingModule({
+        imports: [RegisterPageComponent],
+        providers: [
+          provideRouter([]),
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          { provide: API_BASE_URL, useValue: baseUrl },
+          {
+            provide: AuthViewModel,
+            useValue: {
+              login: vi.fn(),
+              register: vi.fn(),
+              isLoading: isLoadingSignal,
+              errorMessage: signal(null),
+            },
+          },
+        ],
+      }).compileComponents();
+    });
+
+    it('should show "Registering..." text when isLoading is true', () => {
+      const fixture = TestBed.createComponent(RegisterPageComponent);
+      fixture.detectChanges();
+
+      const button = fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
+      expect(button.textContent!.trim()).toBe('Registering...');
+    });
+
+    it('should disable submit button when isLoading is true', () => {
+      const fixture = TestBed.createComponent(RegisterPageComponent);
+      fixture.detectChanges();
+
+      const button = fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
+      expect(button.disabled).toBe(true);
+    });
   });
 
   describe('error message display', () => {

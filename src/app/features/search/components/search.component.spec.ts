@@ -125,6 +125,19 @@ describe('SearchComponent', () => {
     expect(emitted).toEqual([tour]);
   });
 
+  it('should not emit search on non-Enter keydown', () => {
+    const fixture = TestBed.createComponent(SearchComponent);
+    fixture.detectChanges();
+
+    let emitted = false;
+    fixture.componentInstance.search.subscribe(() => (emitted = true));
+
+    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true }));
+
+    expect(emitted).toBe(false);
+  });
+
   it('should show "No tours found" when hasSearched but results are empty', () => {
     const fixture = TestBed.createComponent(SearchComponent);
     fixture.componentRef.setInput('hasSearched', true);
