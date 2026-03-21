@@ -1,5 +1,8 @@
 # TourPlanner (Angular)
 
+[![Tests and Coverage](https://github.com/ANcpLua/TourPlanner-Angular/actions/workflows/coverage.yml/badge.svg)](https://github.com/ANcpLua/TourPlanner-Angular/actions/workflows/coverage.yml)
+[![codecov](https://codecov.io/gh/ANcpLua/TourPlanner-Angular/graph/badge.svg)](https://codecov.io/gh/ANcpLua/TourPlanner-Angular)
+
 SWEN2 2026 -- Tour planning application with .NET 10 backend and Angular 21 frontend.
 
 ## Quick Start (Docker)
@@ -55,7 +58,7 @@ docker compose up -d postgres
 2. Start the API:
 
 ```bash
-dotnet run --project API/API.csproj
+dotnet watch --project API
 ```
 
 3. Install frontend dependencies and start (separate terminal):
