@@ -57,16 +57,14 @@ describe('ReportsApiService', () => {
     req.flush('{"name":"City Walk"}');
   });
 
-  it('should import tour with json query param', () => {
+  it('should import tour with json body', () => {
     const json = '{"name":"Imported Tour"}';
 
     service.importTour(json).subscribe();
 
-    const req = httpTesting.expectOne((r) =>
-      r.url === `${baseUrl}api/reports/import` && r.params.get('json') === json,
-    );
+    const req = httpTesting.expectOne(`${baseUrl}api/reports/import`);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toBeNull();
+    expect(req.request.body).toBe(json);
     req.flush({ id: 'new-id', name: 'Imported Tour' });
   });
 });

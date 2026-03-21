@@ -30,8 +30,8 @@ export class ReportsApiService {
   }
 
   importTour(json: string): Observable<Tour> {
-    return this.http.post<Tour>(this.buildUrl('api/reports/import'), null, {
-      params: { json },
+    return this.http.post<Tour>(this.buildUrl('api/reports/import'), json, {
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 

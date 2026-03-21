@@ -1,8 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   effect,
+  inject,
   input,
   signal,
   viewChild,
@@ -17,6 +19,8 @@ import * as L from 'leaflet';
   styleUrl: './tour-map.component.css',
 })
 export class TourMapComponent {
+  private readonly destroyRef = inject(DestroyRef);
+
   readonly fromLat = input<number | null>(null);
   readonly fromLng = input<number | null>(null);
   readonly toLat = input<number | null>(null);
@@ -26,6 +30,18 @@ export class TourMapComponent {
 
   private map: L.Map | null = null;
   private routeLayer = L.layerGroup();
+
+  private readonly startIcon = L.divIcon({
+    html: '<div style="background:#16a34a;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.3)"></div>',
+    iconSize: [14, 14],
+    className: '',
+  });
+
+  private readonly endIcon = L.divIcon({
+    html: '<div style="background:#dc2626;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.3)"></div>',
+    iconSize: [14, 14],
+    className: '',
+  });
 
   protected readonly isVisible = signal(false);
 
@@ -37,6 +53,8 @@ export class TourMapComponent {
       const to = { lat: this.toLat(), lng: this.toLng() };
       this.updateRoute(from, to);
     });
+
+    this.destroyRef.onDestroy(() => this.map?.remove());
   }
 
   protected toggle(): void {
@@ -77,20 +95,8 @@ export class TourMapComponent {
     const fromLatLng = L.latLng(from.lat, from.lng);
     const toLatLng = L.latLng(to.lat, to.lng);
 
-    const startIcon = L.divIcon({
-      html: '<div style="background:#16a34a;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.3)"></div>',
-      iconSize: [14, 14],
-      className: '',
-    });
-
-    const endIcon = L.divIcon({
-      html: '<div style="background:#dc2626;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.3)"></div>',
-      iconSize: [14, 14],
-      className: '',
-    });
-
-    L.marker(fromLatLng, { icon: startIcon }).addTo(this.routeLayer);
-    L.marker(toLatLng, { icon: endIcon }).addTo(this.routeLayer);
+    L.marker(fromLatLng, { icon: this.startIcon }).addTo(this.routeLayer);
+    L.marker(toLatLng, { icon: this.endIcon }).addTo(this.routeLayer);
 
     L.polyline([fromLatLng, toLatLng], {
       color: '#8d5a21',

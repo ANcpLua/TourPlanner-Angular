@@ -102,7 +102,7 @@ export class ReportViewModel {
     anchor.href = url;
     anchor.download = filename;
     anchor.click();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   private clearMessages(): void {
