@@ -10,71 +10,73 @@ import { RegisterPageComponent } from './register-page.component';
 describe('RegisterPageComponent', () => {
   const baseUrl = 'http://localhost:7102/';
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [RegisterPageComponent],
-      providers: [
-        provideRouter([]),
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        { provide: API_BASE_URL, useValue: baseUrl },
-      ],
-    }).compileComponents();
-  });
+  describe('form validation', () => {
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
+        imports: [RegisterPageComponent],
+        providers: [
+          provideRouter([]),
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          { provide: API_BASE_URL, useValue: baseUrl },
+        ],
+      }).compileComponents();
+    });
 
-  it('should create', () => {
-    const fixture = TestBed.createComponent(RegisterPageComponent);
-    fixture.detectChanges();
-    expect(fixture.componentInstance).toBeTruthy();
-  });
+    it('should create', () => {
+      const fixture = TestBed.createComponent(RegisterPageComponent);
+      fixture.detectChanges();
+      expect(fixture.componentInstance).toBeTruthy();
+    });
 
-  it('should have invalid form when empty', () => {
-    const fixture = TestBed.createComponent(RegisterPageComponent);
-    fixture.detectChanges();
+    it('should have invalid form when empty', () => {
+      const fixture = TestBed.createComponent(RegisterPageComponent);
+      fixture.detectChanges();
 
-    const form = fixture.componentInstance['form'];
-    expect(form.invalid).toBe(true);
-  });
+      const form = fixture.componentInstance['form'];
+      expect(form.invalid).toBe(true);
+    });
 
-  it('should reject password shorter than 6 characters', () => {
-    const fixture = TestBed.createComponent(RegisterPageComponent);
-    fixture.detectChanges();
+    it('should reject password shorter than 6 characters', () => {
+      const fixture = TestBed.createComponent(RegisterPageComponent);
+      fixture.detectChanges();
 
-    const form = fixture.componentInstance['form'];
-    form.setValue({ email: 'user@example.com', password: 'abc' });
+      const form = fixture.componentInstance['form'];
+      form.setValue({ email: 'user@example.com', password: 'abc' });
 
-    expect(form.get('password')!.invalid).toBe(true);
-    expect(form.invalid).toBe(true);
-  });
+      expect(form.get('password')!.invalid).toBe(true);
+      expect(form.invalid).toBe(true);
+    });
 
-  it('should have valid form with email and valid password', () => {
-    const fixture = TestBed.createComponent(RegisterPageComponent);
-    fixture.detectChanges();
+    it('should have valid form with email and valid password', () => {
+      const fixture = TestBed.createComponent(RegisterPageComponent);
+      fixture.detectChanges();
 
-    const form = fixture.componentInstance['form'];
-    form.setValue({ email: 'user@example.com', password: 'secure1' });
+      const form = fixture.componentInstance['form'];
+      form.setValue({ email: 'user@example.com', password: 'secure1' });
 
-    expect(form.valid).toBe(true);
-  });
+      expect(form.valid).toBe(true);
+    });
 
-  it('should have login link', () => {
-    const fixture = TestBed.createComponent(RegisterPageComponent);
-    fixture.detectChanges();
+    it('should have login link', () => {
+      const fixture = TestBed.createComponent(RegisterPageComponent);
+      fixture.detectChanges();
 
-    const el = fixture.nativeElement as HTMLElement;
-    const link = el.querySelector('a[href="/login"]');
-    expect(link).not.toBeNull();
-  });
+      const el = fixture.nativeElement as HTMLElement;
+      const link = el.querySelector('a[href="/login"]');
+      expect(link).not.toBeNull();
+    });
 
-  it('should mark form as touched on invalid submit', () => {
-    const fixture = TestBed.createComponent(RegisterPageComponent);
-    fixture.detectChanges();
+    it('should mark form as touched on invalid submit', () => {
+      const fixture = TestBed.createComponent(RegisterPageComponent);
+      fixture.detectChanges();
 
-    const form = fixture.componentInstance['form'];
-    // Form is empty (invalid) — no values set
-    fixture.componentInstance['submit']();
+      const form = fixture.componentInstance['form'];
+      // Form is empty (invalid) — no values set
+      fixture.componentInstance['submit']();
 
-    expect(form.touched).toBe(true);
+      expect(form.touched).toBe(true);
+    });
   });
 
   describe('with mocked AuthViewModel', () => {
@@ -103,7 +105,7 @@ describe('RegisterPageComponent', () => {
     });
 
     afterEach(() => {
-      vi.clearAllMocks();
+      vi.restoreAllMocks();
     });
 
     it('should call vm.register with form values on valid submit', () => {

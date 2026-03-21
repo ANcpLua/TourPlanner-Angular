@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
   FormControl,
@@ -27,7 +26,7 @@ type TourLogFormGroup = FormGroup<{
 @Component({
   selector: 'app-tour-log-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './tour-log-form.component.html',
   styleUrl: './tour-log-form.component.css',
 })

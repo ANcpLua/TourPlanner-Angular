@@ -42,7 +42,7 @@
           <app-tour-log-list
             [logs]="vm.logs()"
             (editLog)="vm.openEditForm($event)"
-            (deleteLog)="vm.deleteLog($event)"
+            (deleteLog)="confirmDeleteLog($event)"
           />
         }
       </section>

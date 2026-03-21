@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal, computed } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ToursApiService } from '../services/tours-api.service';
 import {
@@ -13,15 +13,14 @@ import {
 export class TourViewModel {
   private readonly toursApi = inject(ToursApiService);
 
-  private readonly rawTours = signal<readonly Tour[]>([]);
+  private readonly _tours = signal<readonly Tour[]>([]);
+  readonly tours = this._tours.asReadonly();
   readonly selectedTourId = signal<string | null>(null);
   readonly isLoading = signal(false);
   readonly isSaving = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly isFormVisible = signal(false);
   readonly editingTourId = signal<string | null>(null);
-
-  readonly tours = computed(() => this.rawTours());
 
   readonly selectedTour = computed(
     () => this.tours().find((t) => t.id === this.selectedTourId()) ?? null,
@@ -53,7 +52,7 @@ export class TourViewModel {
 
     try {
       const tours = await firstValueFrom(this.toursApi.getTours());
-      this.rawTours.set(tours);
+      this._tours.set(tours);
 
       const currentSelection = this.selectedTourId();
       const hasSelection = tours.some((t) => t.id === currentSelection);
@@ -113,11 +112,6 @@ export class TourViewModel {
   }
 
   async deleteTour(tour: Tour): Promise<void> {
-    const shouldDelete = window.confirm(
-      `Delete tour "${tour.name}"? This cannot be undone.`,
-    );
-    if (!shouldDelete) return;
-
     this.errorMessage.set(null);
 
     try {

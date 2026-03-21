@@ -51,6 +51,14 @@ describe('TourLogViewModel', () => {
     expect(vm.tours()).toHaveLength(1);
   });
 
+  it('should set error on loadTours failure', async () => {
+    const promise = vm.loadTours();
+    httpTesting.expectOne(`${baseUrl}api/tour`).error(new ProgressEvent('error'));
+    await promise;
+
+    expect(vm.errorMessage()).toBe('Could not load tours.');
+  });
+
   it('should select tour and load logs', async () => {
     const promise = vm.selectTour('tour-1');
     httpTesting.expectOne(`${baseUrl}api/tourlog/bytour/tour-1`).flush([sampleLog]);
@@ -59,6 +67,14 @@ describe('TourLogViewModel', () => {
     expect(vm.selectedTourId()).toBe('tour-1');
     expect(vm.logs()).toHaveLength(1);
     expect(vm.isFormVisible()).toBe(false);
+  });
+
+  it('should set error on loadLogs failure', async () => {
+    const promise = vm.selectTour('tour-1');
+    httpTesting.expectOne(`${baseUrl}api/tourlog/bytour/tour-1`).error(new ProgressEvent('error'));
+    await promise;
+
+    expect(vm.errorMessage()).toBe('Could not load tour logs.');
   });
 
   it('should clear logs when tour deselected', async () => {
@@ -186,9 +202,8 @@ describe('TourLogViewModel', () => {
       await p;
     }
 
-    it('should delete log and reload when user confirms', async () => {
+    it('should delete log and reload', async () => {
       await selectTourWithLog();
-      vi.spyOn(window, 'confirm').mockReturnValue(true);
 
       const promise = vm.deleteLog(sampleLog);
 
@@ -200,20 +215,18 @@ describe('TourLogViewModel', () => {
 
       expect(vm.logs()).toHaveLength(0);
       expect(vm.errorMessage()).toBeNull();
-
-      vi.restoreAllMocks();
     });
 
-    it('should not issue any HTTP request when user cancels confirm', async () => {
+    it('should set error message when deleteLog fails', async () => {
       await selectTourWithLog();
-      vi.spyOn(window, 'confirm').mockReturnValue(false);
 
-      await vm.deleteLog(sampleLog);
+      const promise = vm.deleteLog(sampleLog);
 
-      // httpTesting.verify() in afterEach asserts no unexpected requests were made
-      expect(vm.errorMessage()).toBeNull();
+      await tick();
+      httpTesting.expectOne({ method: 'DELETE', url: `${baseUrl}api/tourlog/log-1` }).error(new ProgressEvent('error'));
+      await promise;
 
-      vi.restoreAllMocks();
+      expect(vm.errorMessage()).toBe('Could not delete the log.');
     });
   });
 });

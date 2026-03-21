@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
   FormControl,
@@ -42,7 +41,7 @@ function distinctCitiesValidator(
 @Component({
   selector: 'app-tour-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './tour-form.component.html',
   styleUrl: './tour-form.component.css',
 })

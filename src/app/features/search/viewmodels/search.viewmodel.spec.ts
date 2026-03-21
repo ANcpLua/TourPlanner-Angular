@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { API_BASE_URL } from '../../../core/config/api-base-url.token';
@@ -8,6 +8,7 @@ import { SearchViewModel } from './search.viewmodel';
 describe('SearchViewModel', () => {
   let vm: SearchViewModel;
   let httpTesting: HttpTestingController;
+  let router: Router;
   const baseUrl = 'http://localhost:7102/';
 
   beforeEach(() => {
@@ -22,6 +23,7 @@ describe('SearchViewModel', () => {
 
     vm = TestBed.inject(SearchViewModel);
     httpTesting = TestBed.inject(HttpTestingController);
+    router = TestBed.inject(Router);
   });
 
   afterEach(() => httpTesting.verify());
@@ -86,6 +88,22 @@ describe('SearchViewModel', () => {
 
     vm.clear();
 
+    expect(vm.searchText()).toBe('');
+    expect(vm.results()).toEqual([]);
+    expect(vm.hasSearched()).toBe(false);
+  });
+
+  it('should navigate to tour and clear search state', () => {
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    vm.searchText.set('Vienna');
+    vm.results.set([{ id: 'tour-1', name: 'Vienna Tour', description: '', from: 'Vienna', to: 'Berlin', transportType: 'Car' }]);
+    vm.hasSearched.set(true);
+
+    const tour = { id: 'tour-1', name: 'Vienna Tour', description: '', from: 'Vienna', to: 'Berlin', transportType: 'Car' } as const;
+    vm.navigateToTour(tour);
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/tours'], { queryParams: { tourId: 'tour-1' } });
     expect(vm.searchText()).toBe('');
     expect(vm.results()).toEqual([]);
     expect(vm.hasSearched()).toBe(false);

@@ -54,6 +54,14 @@ describe('ReportViewModel', () => {
     expect(vm.tours()).toHaveLength(1);
   });
 
+  it('should set error on loadTours failure', async () => {
+    const promise = vm.loadTours();
+    httpTesting.expectOne(`${baseUrl}api/tour`).error(new ProgressEvent('error'));
+    await promise;
+
+    expect(vm.errorMessage()).toBe('Could not load tours.');
+  });
+
   it('should select tour', () => {
     vm.selectTour('tour-1');
     expect(vm.selectedTourId()).toBe('tour-1');

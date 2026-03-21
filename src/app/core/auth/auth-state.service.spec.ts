@@ -69,4 +69,15 @@ describe('AuthState', () => {
     expect(state.isAuthenticated()).toBe(false);
     expect(state.currentUser()).toBeNull();
   });
+
+  it('logout should call API and clear user', async () => {
+    state.setUser(sampleUser);
+
+    const promise = state.logout();
+    httpTesting.expectOne(`${baseUrl}api/auth/logout`).flush(null);
+    await promise;
+
+    expect(state.isAuthenticated()).toBe(false);
+    expect(state.currentUser()).toBeNull();
+  });
 });

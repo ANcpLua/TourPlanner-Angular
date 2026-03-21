@@ -22,9 +22,9 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render the application shell', async () => {
+  it('should render the application shell', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    await fixture.whenStable();
+    fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('app-shell')).not.toBeNull();
   });

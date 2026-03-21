@@ -4,6 +4,15 @@ import { Tour } from '../../tours/models/tour.model';
 import { ToursApiService } from '../../tours/services/tours-api.service';
 import { ReportsApiService } from '../services/reports-api.service';
 
+export function triggerDownload(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 @Injectable({ providedIn: 'root' })
 export class ReportViewModel {
   private readonly toursApi = inject(ToursApiService);
@@ -34,7 +43,7 @@ export class ReportViewModel {
 
     try {
       const blob = await firstValueFrom(this.reportsApi.getSummaryReport());
-      this.downloadBlob(blob, 'SummaryReport.pdf');
+      triggerDownload(blob, 'SummaryReport.pdf');
       this.successMessage.set('Summary report downloaded.');
     } catch {
       this.errorMessage.set('Could not generate summary report.');
@@ -52,7 +61,7 @@ export class ReportViewModel {
 
     try {
       const blob = await firstValueFrom(this.reportsApi.getTourReport(tourId));
-      this.downloadBlob(blob, `TourReport_${tourId}.pdf`);
+      triggerDownload(blob, `TourReport_${tourId}.pdf`);
       this.successMessage.set('Tour report downloaded.');
     } catch {
       this.errorMessage.set('Could not generate tour report.');
@@ -71,7 +80,7 @@ export class ReportViewModel {
     try {
       const json = await firstValueFrom(this.reportsApi.exportTour(tourId));
       const blob = new Blob([json], { type: 'application/json' });
-      this.downloadBlob(blob, `TourExport_${tourId}.json`);
+      triggerDownload(blob, `TourExport_${tourId}.json`);
       this.successMessage.set('Tour exported.');
     } catch {
       this.errorMessage.set('Could not export tour.');
@@ -94,15 +103,6 @@ export class ReportViewModel {
     } finally {
       this.isProcessing.set(false);
     }
-  }
-
-  private downloadBlob(blob: Blob, filename: string): void {
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = filename;
-    anchor.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   private clearMessages(): void {

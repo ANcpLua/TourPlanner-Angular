@@ -26,6 +26,8 @@ describe('authGuard', () => {
     router = TestBed.inject(Router);
   });
 
+  afterEach(() => vi.restoreAllMocks());
+
   it('should allow access when authenticated', async () => {
     authState.setUser({ id: 'user-1', email: 'user@example.com' });
 
@@ -34,7 +36,7 @@ describe('authGuard', () => {
     expect(result).toBe(true);
   });
 
-  it('should check session when not authenticated', async () => {
+  it('should skip session check when already authenticated', async () => {
     vi.spyOn(authState, 'checkSession').mockResolvedValue(undefined);
     authState.setUser({ id: 'user-1', email: 'user@example.com' });
 

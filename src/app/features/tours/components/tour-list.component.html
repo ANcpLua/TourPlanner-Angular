@@ -5,7 +5,7 @@
   </div>
 } @else {
   <div class="tour-list">
-    @for (tour of tours(); track trackTour($index, tour)) {
+    @for (tour of tours(); track tour.id) {
       <article
         class="tour-card"
         [class.tour-card--selected]="selectedTourId() === tour.id"

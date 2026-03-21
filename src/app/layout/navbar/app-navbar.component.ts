@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthState } from '../../core/auth/auth-state.service';
-import { AuthApiService } from '../../core/auth/auth-api.service';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -13,11 +11,9 @@ import { firstValueFrom } from 'rxjs';
 })
 export class AppNavbarComponent {
   protected readonly authState = inject(AuthState);
-  private readonly authApi = inject(AuthApiService);
 
   protected async logout(): Promise<void> {
-    await firstValueFrom(this.authApi.logout());
-    this.authState.clear();
+    await this.authState.logout();
     window.location.href = '/login';
   }
 }

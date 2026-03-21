@@ -1,14 +1,14 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TourLogListComponent } from '../components/tour-log-list.component';
 import { TourLogFormComponent } from '../components/tour-log-form.component';
+import { TourLog } from '../models/tour-log.model';
 import { TourLogViewModel } from '../viewmodels/tour-log.viewmodel';
 
 @Component({
   selector: 'app-tour-logs-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TourLogListComponent, TourLogFormComponent],
+  imports: [TourLogListComponent, TourLogFormComponent],
   templateUrl: './tour-logs-page.component.html',
   styleUrl: './tour-logs-page.component.css',
 })
@@ -28,5 +28,11 @@ export class TourLogsPageComponent implements OnInit {
   protected async onTourSelected(event: Event): Promise<void> {
     const select = event.target as HTMLSelectElement;
     await this.vm.selectTour(select.value || null);
+  }
+
+  protected async confirmDeleteLog(log: TourLog): Promise<void> {
+    if (window.confirm('Delete this log? This cannot be undone.')) {
+      await this.vm.deleteLog(log);
+    }
   }
 }

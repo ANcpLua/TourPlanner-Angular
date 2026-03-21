@@ -1,15 +1,16 @@
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TourFormComponent } from '../components/tour-form.component';
 import { TourListComponent } from '../components/tour-list.component';
 import { TourMapComponent } from '../components/tour-map.component';
+import { Tour } from '../models/tour.model';
 import { TourViewModel } from '../viewmodels/tour.viewmodel';
 
 @Component({
   selector: 'app-tours-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DecimalPipe, TourFormComponent, TourListComponent, TourMapComponent, RouterLink],
+  imports: [DecimalPipe, TourFormComponent, TourListComponent, TourMapComponent, RouterLink],
   templateUrl: './tours-page.component.html',
   styleUrl: './tours-page.component.css',
 })
@@ -18,5 +19,11 @@ export class ToursPageComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.vm.loadTours();
+  }
+
+  protected async confirmDeleteTour(tour: Tour): Promise<void> {
+    if (window.confirm(`Delete tour "${tour.name}"? This cannot be undone.`)) {
+      await this.vm.deleteTour(tour);
+    }
   }
 }

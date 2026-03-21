@@ -57,6 +57,15 @@ describe('TourViewModel', () => {
     expect(vm.isLoading()).toBe(false);
   });
 
+  it('should load tours with empty array', async () => {
+    const promise = vm.loadTours();
+    httpTesting.expectOne(`${baseUrl}api/tour`).flush([]);
+    await promise;
+
+    expect(vm.tours()).toEqual([]);
+    expect(vm.selectedTourId()).toBeNull();
+  });
+
   it('should set error on load failure', async () => {
     const promise = vm.loadTours();
     httpTesting.expectOne(`${baseUrl}api/tour`).error(new ProgressEvent('error'));
@@ -235,9 +244,7 @@ describe('TourViewModel', () => {
   describe('deleteTour', () => {
     const tick = () => Promise.resolve().then(() => Promise.resolve());
 
-    it('should delete tour and reload when user confirms', async () => {
-      vi.spyOn(window, 'confirm').mockReturnValue(true);
-
+    it('should delete tour and reload', async () => {
       // Pre-load so there is something in the list to reload
       const loadPromise = vm.loadTours();
       await tick();
@@ -254,24 +261,9 @@ describe('TourViewModel', () => {
 
       expect(vm.tours()).toHaveLength(0);
       expect(vm.errorMessage()).toBeNull();
-
-      vi.restoreAllMocks();
-    });
-
-    it('should not issue any HTTP request when user cancels confirm', async () => {
-      vi.spyOn(window, 'confirm').mockReturnValue(false);
-
-      await vm.deleteTour(sampleTour);
-
-      // httpTesting.verify() in afterEach asserts no unexpected requests were made
-      expect(vm.errorMessage()).toBeNull();
-
-      vi.restoreAllMocks();
     });
 
     it('should set error message when deleteTour fails', async () => {
-      vi.spyOn(window, 'confirm').mockReturnValue(true);
-
       const promise = vm.deleteTour(sampleTour);
 
       await tick();
@@ -279,8 +271,50 @@ describe('TourViewModel', () => {
       await promise;
 
       expect(vm.errorMessage()).toBe('Could not delete the selected tour.');
+    });
 
-      vi.restoreAllMocks();
+    it('should reset selectedTourId when deleting the selected tour', async () => {
+      const secondTour: Tour = { ...sampleTour, id: 'tour-2', name: 'Second Tour' };
+
+      // Pre-load two tours
+      const loadPromise = vm.loadTours();
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tour` }).flush([sampleTour, secondTour]);
+      await loadPromise;
+
+      expect(vm.selectedTourId()).toBe('tour-1');
+
+      const promise = vm.deleteTour(sampleTour);
+
+      await tick();
+      httpTesting.expectOne({ method: 'DELETE', url: `${baseUrl}api/tour/tour-1` }).flush(null);
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tour` }).flush([secondTour]);
+      await promise;
+
+      expect(vm.selectedTourId()).toBe('tour-2');
+    });
+
+    it('should not change selectedTourId when deleting a non-selected tour', async () => {
+      const secondTour: Tour = { ...sampleTour, id: 'tour-2', name: 'Second Tour' };
+
+      // Pre-load two tours
+      const loadPromise = vm.loadTours();
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tour` }).flush([sampleTour, secondTour]);
+      await loadPromise;
+
+      expect(vm.selectedTourId()).toBe('tour-1');
+
+      const promise = vm.deleteTour(secondTour);
+
+      await tick();
+      httpTesting.expectOne({ method: 'DELETE', url: `${baseUrl}api/tour/tour-2` }).flush(null);
+      await tick();
+      httpTesting.expectOne({ method: 'GET', url: `${baseUrl}api/tour` }).flush([sampleTour]);
+      await promise;
+
+      expect(vm.selectedTourId()).toBe('tour-1');
     });
   });
 

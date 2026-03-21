@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal, computed } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AuthApiService } from './auth-api.service';
 import type { UserInfo } from '../../features/auth/models/auth.model';
@@ -9,7 +9,7 @@ export class AuthState {
 
   private readonly user = signal<UserInfo | null>(null);
   readonly isAuthenticated = computed(() => this.user() !== null);
-  readonly currentUser = computed(() => this.user());
+  readonly currentUser = this.user.asReadonly();
 
   async checkSession(): Promise<void> {
     try {
@@ -22,6 +22,11 @@ export class AuthState {
 
   setUser(user: UserInfo): void {
     this.user.set(user);
+  }
+
+  async logout(): Promise<void> {
+    await firstValueFrom(this.authApi.logout());
+    this.clear();
   }
 
   clear(): void {

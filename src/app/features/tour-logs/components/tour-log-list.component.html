@@ -5,7 +5,7 @@
   </div>
 } @else {
   <div class="log-list">
-    @for (log of logs(); track trackLog($index, log)) {
+    @for (log of logs(); track log.id) {
       <article class="log-card">
         <div class="log-card__body">
           <div class="log-card__header">

@@ -101,9 +101,6 @@ export class TourLogViewModel {
   }
 
   async deleteLog(log: TourLog): Promise<void> {
-    const shouldDelete = window.confirm('Delete this log? This cannot be undone.');
-    if (!shouldDelete) return;
-
     this.errorMessage.set(null);
 
     try {

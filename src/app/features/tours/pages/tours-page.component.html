@@ -39,7 +39,7 @@
           [selectedTourId]="vm.selectedTourId()"
           (selectTour)="vm.selectTour($event)"
           (editTour)="vm.openEditForm($event)"
-          (deleteTour)="vm.deleteTour($event)"
+          (deleteTour)="confirmDeleteTour($event)"
         />
       }
     </section>
