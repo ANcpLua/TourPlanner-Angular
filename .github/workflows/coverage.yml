@@ -26,7 +26,11 @@ jobs:
         run: npm ci
 
       - name: Run Angular tests with coverage
-        run: npx ng test --coverage --coverage-reporters=cobertura --coverage-reporters=text-summary
+        run: >-
+          npx ng test --coverage
+          --coverage-reporters=cobertura
+          --coverage-reporters=text-summary
+          --coverage-include=src/app/**/*.ts
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5

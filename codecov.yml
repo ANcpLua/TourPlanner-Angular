@@ -2,15 +2,14 @@ coverage:
   status:
     project:
       default:
-        flags:
-          - angular
+        target: auto
     patch:
       default:
-        flags:
-          - angular
+        target: auto
 
-flags:
-  angular:
-    paths:
-      - src/app/
-    carryforward: true
+ignore:
+  - "**/*.spec.ts"
+  - "**/*.html"
+  - "src/main.ts"
+  - "src/app/app.config.ts"
+  - "src/app/app.routes.ts"
