@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AppNavbarComponent } from '../navbar/app-navbar.component';
 import { SearchComponent } from '../../features/search/components/search.component';
+import { AuthState } from '../../core/auth/auth-state.service';
 
 @Component({
   selector: 'app-shell',
@@ -10,4 +11,6 @@ import { SearchComponent } from '../../features/search/components/search.compone
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.css',
 })
-export class AppShellComponent {}
+export class AppShellComponent {
+  protected readonly authState = inject(AuthState);
+}

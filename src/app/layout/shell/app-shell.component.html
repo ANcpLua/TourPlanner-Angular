@@ -1,9 +1,11 @@
 <div class="shell">
   <app-navbar />
 
-  <div class="shell__search">
-    <app-search />
-  </div>
+  @if (authState.isAuthenticated()) {
+    <div class="shell__search">
+      <app-search />
+    </div>
+  }
 
   <main class="shell__content">
     <router-outlet />
