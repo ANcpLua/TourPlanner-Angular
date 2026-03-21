@@ -58,6 +58,16 @@ describe('AppNavbarComponent', () => {
     expect(span.textContent?.trim()).toBe('user@example.com');
   });
 
+  it('should render empty email span when authenticated but currentUser is null', () => {
+    authState['isAuthenticated'].mockReturnValue(true);
+    authState['currentUser'].mockReturnValue(null);
+    const fixture = TestBed.createComponent(AppNavbarComponent);
+    fixture.detectChanges();
+
+    const span = fixture.nativeElement.querySelector('.navbar__user span') as HTMLSpanElement;
+    expect(span.textContent?.trim()).toBe('');
+  });
+
   it('should call authState.logout and redirect on logout click', async () => {
     authState['isAuthenticated'].mockReturnValue(true);
     authState['currentUser'].mockReturnValue({ id: 'u1', email: 'user@example.com' });

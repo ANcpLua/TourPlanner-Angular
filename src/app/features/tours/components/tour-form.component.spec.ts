@@ -215,6 +215,33 @@ describe('TourFormComponent', () => {
     expect(toError).toBeDefined();
   });
 
+  it('should show "Saving…" when submitting is true', () => {
+    const fixture = TestBed.createComponent(TourFormComponent);
+    fixture.componentRef.setInput('submitting', true);
+    fixture.detectChanges();
+
+    const submitBtn = fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
+    expect(submitBtn.textContent).toContain('Saving');
+  });
+
+  it('should disable submit button when submitting is true', () => {
+    const fixture = TestBed.createComponent(TourFormComponent);
+    fixture.detectChanges();
+
+    const form = fixture.componentInstance['form'];
+    form.controls['name'].setValue('My Tour');
+    form.controls['description'].setValue('A nice tour');
+    form.controls['from'].setValue('Vienna');
+    form.controls['to'].setValue('Berlin');
+    form.controls['transportType'].setValue('Car');
+
+    fixture.componentRef.setInput('submitting', true);
+    fixture.detectChanges();
+
+    const submitBtn = fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
+    expect(submitBtn.disabled).toBe(true);
+  });
+
   it('should render identicalCities error message in template', () => {
     const fixture = TestBed.createComponent(TourFormComponent);
     fixture.detectChanges();
@@ -229,5 +256,97 @@ describe('TourFormComponent', () => {
     const errorP = el.querySelector('.tour-form__error');
     expect(errorP).not.toBeNull();
     expect(errorP!.textContent).toContain('Start and destination must be different.');
+  });
+
+  describe('resetFormEffect', () => {
+    const tourA: Tour = {
+      id: 'tour-a',
+      name: 'Tour A',
+      description: 'Desc A',
+      from: 'Vienna',
+      to: 'Berlin',
+      transportType: 'Car',
+    } as Tour;
+
+    const tourB: Tour = {
+      id: 'tour-b',
+      name: 'Tour B',
+      description: 'Desc B',
+      from: 'Paris',
+      to: 'Budapest',
+      transportType: 'Bike',
+    } as Tour;
+
+    it('should populate form fields when tour input is set', () => {
+      const fixture = TestBed.createComponent(TourFormComponent);
+      fixture.componentRef.setInput('tour', tourA);
+      fixture.detectChanges();
+
+      const form = fixture.componentInstance['form'];
+      expect(form.controls['id'].value).toBe('tour-a');
+      expect(form.controls['name'].value).toBe('Tour A');
+      expect(form.controls['description'].value).toBe('Desc A');
+      expect(form.controls['from'].value).toBe('Vienna');
+      expect(form.controls['to'].value).toBe('Berlin');
+      expect(form.controls['transportType'].value).toBe('Car');
+    });
+
+    it('should update form fields when tour input changes to a different tour', () => {
+      const fixture = TestBed.createComponent(TourFormComponent);
+      fixture.componentRef.setInput('tour', tourA);
+      fixture.detectChanges();
+
+      fixture.componentRef.setInput('tour', tourB);
+      fixture.detectChanges();
+
+      const form = fixture.componentInstance['form'];
+      expect(form.controls['id'].value).toBe('tour-b');
+      expect(form.controls['name'].value).toBe('Tour B');
+      expect(form.controls['description'].value).toBe('Desc B');
+      expect(form.controls['from'].value).toBe('Paris');
+      expect(form.controls['to'].value).toBe('Budapest');
+      expect(form.controls['transportType'].value).toBe('Bike');
+    });
+
+    it('should reset form to empty values when tour input is removed', () => {
+      const fixture = TestBed.createComponent(TourFormComponent);
+      fixture.componentRef.setInput('tour', tourA);
+      fixture.detectChanges();
+
+      // Verify form was populated first
+      expect(fixture.componentInstance['form'].controls['name'].value).toBe('Tour A');
+
+      fixture.componentRef.setInput('tour', null);
+      fixture.detectChanges();
+
+      const form = fixture.componentInstance['form'];
+      expect(form.controls['id'].value).toBeNull();
+      expect(form.controls['name'].value).toBe('');
+      expect(form.controls['description'].value).toBe('');
+      expect(form.controls['from'].value).toBe('');
+      expect(form.controls['to'].value).toBe('');
+      expect(form.controls['transportType'].value).toBe('Car');
+    });
+  });
+
+  it('should show required error for a dirty empty name field', () => {
+    const fixture = TestBed.createComponent(TourFormComponent);
+    fixture.detectChanges();
+
+    const nameControl = fixture.componentInstance['form'].controls['name'];
+    nameControl.setValue('');
+    nameControl.markAsDirty();
+
+    expect(fixture.componentInstance['showRequiredError']('name')).toBe(true);
+  });
+
+  it('should return the correct AbstractControl from control()', () => {
+    const fixture = TestBed.createComponent(TourFormComponent);
+    fixture.detectChanges();
+
+    const form = fixture.componentInstance['form'];
+    const result = fixture.componentInstance['control']('name');
+
+    expect(result).toBe(form.controls['name']);
   });
 });

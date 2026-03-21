@@ -101,6 +101,68 @@ describe('TourListComponent', () => {
     expect(emitted!.id).toBe('tour-1');
   });
 
+  it('should show average rating tag when tour has averageRating', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', [
+      { ...sampleTours[1], averageRating: 4.5 },
+    ]);
+    fixture.detectChanges();
+
+    const tags = fixture.nativeElement.querySelectorAll('.tour-card__tag');
+    const ratingTag = Array.from(tags).find(
+      (tag) => (tag as HTMLElement).textContent?.includes('Rating:'),
+    ) as HTMLElement | undefined;
+
+    expect(ratingTag).toBeDefined();
+    expect(ratingTag!.textContent).toContain('4.5');
+  });
+
+  it('should not show average rating tag when averageRating is null', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', [
+      { ...sampleTours[0], averageRating: null },
+    ]);
+    fixture.detectChanges();
+
+    const tags = fixture.nativeElement.querySelectorAll('.tour-card__tag');
+    const ratingTag = Array.from(tags).find(
+      (tag) => (tag as HTMLElement).textContent?.includes('Rating:'),
+    );
+
+    expect(ratingTag).toBeUndefined();
+  });
+
+  it('should show child-friendly tag when tour is child-friendly', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', [
+      { ...sampleTours[1], isChildFriendly: true },
+    ]);
+    fixture.detectChanges();
+
+    const tags = fixture.nativeElement.querySelectorAll('.tour-card__tag');
+    const friendlyTag = Array.from(tags).find(
+      (tag) => (tag as HTMLElement).textContent?.includes('Child-friendly'),
+    ) as HTMLElement | undefined;
+
+    expect(friendlyTag).toBeDefined();
+    expect(friendlyTag!.classList).toContain('tour-card__tag--friendly');
+  });
+
+  it('should not show child-friendly tag when tour is not child-friendly', () => {
+    const fixture = TestBed.createComponent(TourListComponent);
+    fixture.componentRef.setInput('tours', [
+      { ...sampleTours[0], isChildFriendly: false },
+    ]);
+    fixture.detectChanges();
+
+    const tags = fixture.nativeElement.querySelectorAll('.tour-card__tag');
+    const friendlyTag = Array.from(tags).find(
+      (tag) => (tag as HTMLElement).textContent?.includes('Child-friendly'),
+    );
+
+    expect(friendlyTag).toBeUndefined();
+  });
+
   it('should emit deleteTour on delete button click', () => {
     const fixture = TestBed.createComponent(TourListComponent);
     fixture.componentRef.setInput('tours', sampleTours);

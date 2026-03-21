@@ -323,6 +323,90 @@ describe('TourLogFormComponent', () => {
     expect(texts).toContain('Must be positive.');
   });
 
+  it('should populate form when log input is set after creation', () => {
+    const fixture = TestBed.createComponent(TourLogFormComponent);
+    fixture.componentRef.setInput('tourId', 'tour-1');
+    fixture.detectChanges();
+
+    // Initially the form has empty/default values
+    const form = fixture.componentInstance['form'];
+    expect(form.value.comment).toBe('');
+    expect(form.value.difficulty).toBe(1);
+
+    // Set a log input after initial creation to trigger resetFormEffect
+    fixture.componentRef.setInput('log', {
+      id: 'log-1',
+      tourId: 'tour-1',
+      dateTime: '2026-03-15T10:00:00Z',
+      comment: 'Scenic route',
+      difficulty: 4,
+      totalDistance: 2500,
+      totalTime: 3,
+      rating: 5,
+    } satisfies TourLog);
+    fixture.detectChanges();
+
+    expect(form.value.comment).toBe('Scenic route');
+    expect(form.value.difficulty).toBe(4);
+    expect(form.value.totalDistance).toBe(2500);
+    expect(form.value.totalTime).toBe(3);
+    expect(form.value.rating).toBe(5);
+    expect(form.getRawValue().id).toBe('log-1');
+  });
+
+  it('should reset form to empty defaults when log input changes from a log to undefined', () => {
+    const fixture = TestBed.createComponent(TourLogFormComponent);
+    fixture.componentRef.setInput('tourId', 'tour-1');
+    fixture.componentRef.setInput('log', {
+      id: 'log-1',
+      tourId: 'tour-1',
+      dateTime: '2026-03-15T10:00:00Z',
+      comment: 'Scenic route',
+      difficulty: 4,
+      totalDistance: 2500,
+      totalTime: 3,
+      rating: 5,
+    } satisfies TourLog);
+    fixture.detectChanges();
+
+    const form = fixture.componentInstance['form'];
+    expect(form.value.comment).toBe('Scenic route');
+
+    // Clear the log input -- effect should reset form to createEmptyTourLogFormValue
+    fixture.componentRef.setInput('log', undefined);
+    fixture.detectChanges();
+
+    expect(form.value.comment).toBe('');
+    expect(form.value.difficulty).toBe(1);
+    expect(form.value.totalDistance).toBe(0);
+    expect(form.value.totalTime).toBe(0);
+    expect(form.value.rating).toBe(1);
+    expect(form.getRawValue().id).toBeNull();
+    expect(form.value.tourId).toBe('tour-1');
+  });
+
+  it('should mark all controls as touched when submitting an invalid form', () => {
+    const fixture = TestBed.createComponent(TourLogFormComponent);
+    fixture.componentRef.setInput('tourId', 'tour-1');
+    fixture.detectChanges();
+
+    const form = fixture.componentInstance['form'];
+    // comment is empty by default so form is invalid
+    expect(form.invalid).toBe(true);
+    expect(form.controls.comment.touched).toBe(false);
+    expect(form.controls.difficulty.touched).toBe(false);
+
+    // Call submit() directly -- the submit button is disabled when form.invalid,
+    // so clicking it would not trigger ngSubmit.
+    fixture.componentInstance['submit']();
+
+    expect(form.controls.comment.touched).toBe(true);
+    expect(form.controls.difficulty.touched).toBe(true);
+    expect(form.controls.rating.touched).toBe(true);
+    expect(form.controls.totalDistance.touched).toBe(true);
+    expect(form.controls.totalTime.touched).toBe(true);
+  });
+
   it('should render all required errors when all fields are cleared and touched', () => {
     const fixture = TestBed.createComponent(TourLogFormComponent);
     fixture.componentRef.setInput('tourId', 'tour-1');
