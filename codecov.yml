@@ -1,11 +1,30 @@
 coverage:
   status:
     project:
-      default:
-        target: auto
+      angular:
+        flags:
+          - angular
+        target: 95%
+      dotnet:
+        flags:
+          - dotnet
+        target: 90%
     patch:
       default:
         target: auto
+
+flags:
+  angular:
+    paths:
+      - src/app/
+    carryforward: true
+  dotnet:
+    paths:
+      - API/
+      - BL/
+      - DAL/
+      - Contracts/
+    carryforward: true
 
 ignore:
   - "src/app/app.config.ts"
