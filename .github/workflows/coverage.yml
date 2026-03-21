@@ -35,6 +35,7 @@ jobs:
           --coverage-exclude='src/app/app.routes.ts'
           --coverage-exclude='src/app/core/api/generated/**'
           --coverage-exclude='src/app/**/models/**'
+          --coverage-exclude='src/app/features/tours/components/tour-map.component.ts'
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5

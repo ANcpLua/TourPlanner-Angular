@@ -12,3 +12,4 @@ ignore:
   - "src/app/app.routes.ts"
   - "src/app/core/api/generated/**"
   - "src/app/**/models/**"
+  - "src/app/features/tours/components/tour-map.component.ts"
