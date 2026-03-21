@@ -3,6 +3,7 @@ import { computed, signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ActivatedRoute } from '@angular/router';
 import { API_BASE_URL } from '../../../core/config/api-base-url.token';
 import { TourLogViewModel } from '../viewmodels/tour-log.viewmodel';
 import { TourLogsPageComponent } from './tour-logs-page.component';
@@ -94,6 +95,165 @@ describe('TourLogsPageComponent', () => {
 
       expect(confirmMock).toHaveBeenCalledOnce();
       expect(deleteLogMock).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('ngOnInit', () => {
+    function createMockVm() {
+      return {
+        tours: signal([]),
+        selectedTourId: signal(null as string | null),
+        logs: signal([] as TourLog[]),
+        editingLog: computed(() => null),
+        isLoading: signal(false),
+        isSaving: signal(false),
+        isFormVisible: signal(false),
+        errorMessage: signal(null as string | null),
+        loadTours: vi.fn().mockResolvedValue(undefined),
+        selectTour: vi.fn().mockResolvedValue(undefined),
+        loadLogs: vi.fn(),
+        openCreateForm: vi.fn(),
+        openEditForm: vi.fn(),
+        closeForm: vi.fn(),
+        saveLog: vi.fn(),
+        deleteLog: vi.fn(),
+        editingLogId: signal(null),
+      };
+    }
+
+    it('should call vm.loadTours on init', async () => {
+      const mockVm = createMockVm();
+
+      await TestBed.configureTestingModule({
+        imports: [TourLogsPageComponent],
+        providers: [
+          provideRouter([]),
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          { provide: API_BASE_URL, useValue: 'http://localhost:7102/' },
+          { provide: TourLogViewModel, useValue: mockVm },
+          {
+            provide: ActivatedRoute,
+            useValue: { snapshot: { paramMap: { get: () => null } } },
+          },
+        ],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(TourLogsPageComponent);
+      await fixture.componentInstance.ngOnInit();
+
+      expect(mockVm.loadTours).toHaveBeenCalledOnce();
+      expect(mockVm.selectTour).not.toHaveBeenCalled();
+    });
+
+    it('should call vm.selectTour when route has tourId param', async () => {
+      const mockVm = createMockVm();
+
+      await TestBed.configureTestingModule({
+        imports: [TourLogsPageComponent],
+        providers: [
+          provideRouter([]),
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          { provide: API_BASE_URL, useValue: 'http://localhost:7102/' },
+          { provide: TourLogViewModel, useValue: mockVm },
+          {
+            provide: ActivatedRoute,
+            useValue: {
+              snapshot: {
+                paramMap: {
+                  get: (key: string) => (key === 'tourId' ? 'tour-42' : null),
+                },
+              },
+            },
+          },
+        ],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(TourLogsPageComponent);
+      await fixture.componentInstance.ngOnInit();
+
+      expect(mockVm.loadTours).toHaveBeenCalledOnce();
+      expect(mockVm.selectTour).toHaveBeenCalledOnce();
+      expect(mockVm.selectTour).toHaveBeenCalledWith('tour-42');
+    });
+  });
+
+  describe('onTourSelected', () => {
+    function createMockVm() {
+      return {
+        tours: signal([]),
+        selectedTourId: signal(null as string | null),
+        logs: signal([] as TourLog[]),
+        editingLog: computed(() => null),
+        isLoading: signal(false),
+        isSaving: signal(false),
+        isFormVisible: signal(false),
+        errorMessage: signal(null as string | null),
+        loadTours: vi.fn().mockResolvedValue(undefined),
+        selectTour: vi.fn().mockResolvedValue(undefined),
+        loadLogs: vi.fn(),
+        openCreateForm: vi.fn(),
+        openEditForm: vi.fn(),
+        closeForm: vi.fn(),
+        saveLog: vi.fn(),
+        deleteLog: vi.fn(),
+        editingLogId: signal(null),
+      };
+    }
+
+    it('should call vm.selectTour with the selected value', async () => {
+      const mockVm = createMockVm();
+
+      await TestBed.configureTestingModule({
+        imports: [TourLogsPageComponent],
+        providers: [
+          provideRouter([]),
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          { provide: API_BASE_URL, useValue: 'http://localhost:7102/' },
+          { provide: TourLogViewModel, useValue: mockVm },
+          {
+            provide: ActivatedRoute,
+            useValue: { snapshot: { paramMap: { get: () => null } } },
+          },
+        ],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(TourLogsPageComponent);
+      fixture.detectChanges();
+
+      const event = { target: { value: 'tour-99' } } as unknown as Event;
+      await fixture.componentInstance['onTourSelected'](event);
+
+      expect(mockVm.selectTour).toHaveBeenCalledWith('tour-99');
+    });
+
+    it('should call vm.selectTour with null when value is empty', async () => {
+      const mockVm = createMockVm();
+
+      await TestBed.configureTestingModule({
+        imports: [TourLogsPageComponent],
+        providers: [
+          provideRouter([]),
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          { provide: API_BASE_URL, useValue: 'http://localhost:7102/' },
+          { provide: TourLogViewModel, useValue: mockVm },
+          {
+            provide: ActivatedRoute,
+            useValue: { snapshot: { paramMap: { get: () => null } } },
+          },
+        ],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(TourLogsPageComponent);
+      fixture.detectChanges();
+
+      const event = { target: { value: '' } } as unknown as Event;
+      await fixture.componentInstance['onTourSelected'](event);
+
+      expect(mockVm.selectTour).toHaveBeenCalledWith(null);
     });
   });
 });
