@@ -94,10 +94,5 @@ jobs:
             --coverlet-exclude-by-attribute CompilerGeneratedAttribute \
             --results-directory TestResults
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./TestResults/coverage.cobertura.xml
-          flags: dotnet
-          fail_ci_if_error: true
+      # Coverage uploaded from Blazor repo (source of truth for backend)
+      # No Codecov upload here to avoid diluting Angular coverage
