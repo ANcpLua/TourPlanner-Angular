@@ -12,7 +12,9 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -32,17 +34,37 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/cobertura-coverage.xml
           flags: angular
-          fail_ci_if_error: false
+          fail_ci_if_error: true
 
   dotnet-tests:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: tourplanner_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d tourplanner_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      ConnectionStrings__TourPlannerDatabase: Host=127.0.0.1;Port=5432;Database=tourplanner_test;Username=postgres;Password=postgres
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
 
       - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
 
@@ -59,9 +81,18 @@ jobs:
 
       - name: Run tests with coverage (MTP + coverlet)
         run: |
-          ./Test/bin/Release/net10.0/Test \
+          ./Tests/bin/Release/net10.0/Tests \
             --coverlet --coverlet-output-format cobertura \
-            --coverlet-output TestResults/coverage.cobertura.xml
+            --coverlet-exclude-by-file "**/Program.cs" \
+            --coverlet-exclude-by-file "**/*.g.cs" \
+            --coverlet-exclude-by-file "**/*.g.i.cs" \
+            --coverlet-exclude-by-file "**/*.designer.cs" \
+            --coverlet-exclude-by-file "**/*.Generated.cs" \
+            --coverlet-exclude "[*]*.Migrations.*" \
+            --coverlet-exclude-by-attribute ExcludeFromCodeCoverage \
+            --coverlet-exclude-by-attribute GeneratedCodeAttribute \
+            --coverlet-exclude-by-attribute CompilerGeneratedAttribute \
+            --results-directory TestResults
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
@@ -69,4 +100,4 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./TestResults/coverage.cobertura.xml
           flags: dotnet
-          fail_ci_if_error: false
+          fail_ci_if_error: true
