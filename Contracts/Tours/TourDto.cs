@@ -43,4 +43,13 @@ public sealed class TourDto
 
     [JsonPropertyName("tourLogs")]
     public IReadOnlyList<TourLogDto> TourLogs { get; set; } = [];
+
+    [JsonPropertyName("popularity")]
+    public string? Popularity { get; set; }
+
+    [JsonPropertyName("isChildFriendly")]
+    public bool IsChildFriendly { get; set; }
+
+    [JsonPropertyName("averageRating")]
+    public double? AverageRating { get; set; }
 }
