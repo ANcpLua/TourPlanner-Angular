@@ -1,7 +1,7 @@
 # TourPlanner (Angular)
 
 [![Tests and Coverage](https://github.com/ANcpLua/TourPlanner-Angular/actions/workflows/coverage.yml/badge.svg?branch=main)](https://github.com/ANcpLua/TourPlanner-Angular/actions/workflows/coverage.yml)
-[![codecov](https://codecov.io/gh/ANcpLua/TourPlanner-Angular/branch/main/graph/badge.svg?token=J9JZVG4PRZ)](https://codecov.io/gh/ANcpLua/TourPlanner-Angular)
+[![codecov](https://codecov.io/gh/ANcpLua/TourPlanner-Angular/branch/main/graph/badge.svg?token=WT105R5OX4)](https://codecov.io/gh/ANcpLua/TourPlanner-Angular)
 
 SWEN2 2026 -- Tour planning application with .NET 10 backend and Angular 21 frontend.
 
