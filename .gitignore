@@ -49,3 +49,9 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Tool artifacts
+.claude/elegance_pipeline/
+.claude/agent-memory-local/
+.playwright-mcp/
+docs/superpowers/
