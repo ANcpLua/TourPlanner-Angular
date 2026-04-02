@@ -1,3 +1,5 @@
+@import 'tailwindcss';
+
 :root {
   color-scheme: light;
   font-family:
@@ -34,4 +36,56 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid rgba(49, 53, 59, 0.14);
+  border-radius: 0.8rem;
+  background: #fffdfa;
+  color: #1f2329;
+  outline: none;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #9ca3af;
+}
+
+button {
+  transition: background-color 0.15s, opacity 0.15s, transform 0.1s;
+}
+
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 2px solid #8d5a21;
+  outline-offset: 2px;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  border-color: #8d5a21;
+  outline: 2px solid rgba(141, 90, 33, 0.3);
+  outline-offset: 0;
+}
+
+a {
+  transition: color 0.15s;
 }
