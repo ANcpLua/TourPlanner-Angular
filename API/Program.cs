@@ -2,10 +2,10 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using API.Endpoints;
 using API.Infrastructure;
-using BL.Interface;
-using BL.Module;
+using BL.Interfaces;
+using BL.Modules;
 using DAL.Infrastructure;
-using DAL.Module;
+using DAL.Modules;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi;
@@ -25,7 +25,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 });
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowUI", policy =>
+    options.AddPolicy(ApiRoute.CorsPolicy, policy =>
         policy
             .WithOrigins(
                 "http://localhost:7226",
@@ -84,6 +84,9 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         options.Password.RequireUppercase = false;
         options.Password.RequireNonAlphanumeric = false;
         options.Password.RequiredLength = 6;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.AllowedForNewUsers = true;
     })
     .AddEntityFrameworkStores<TourPlannerContext>()
     .AddDefaultTokenProviders();
@@ -114,7 +117,7 @@ var app = builder.Build();
 
 
 app.UseRouting();
-app.UseCors("AllowUI");
+app.UseCors(ApiRoute.CorsPolicy);
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -124,6 +127,6 @@ app.MapControllers();
 app.MapAuthEndpoints();
 app.MapRouteEndpoints();
 app.MapReportEndpoints();
-app.MapHealthChecks("/health").AllowAnonymous();
-app.MapOpenApi().AllowAnonymous();
+app.MapHealthChecks(ApiRoute.Health).AllowAnonymous();
+app.MapOpenApi(ApiRoute.OpenApiDocument).AllowAnonymous();
 app.Run();

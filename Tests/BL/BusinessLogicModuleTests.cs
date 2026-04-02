@@ -1,7 +1,7 @@
 ﻿using Autofac;
-using BL.Interface;
-using BL.Module;
-using DAL.Interface;
+using BL.Interfaces;
+using BL.Modules;
+using DAL.Interfaces;
 using MapsterMapper;
 
 namespace Tests.BL;

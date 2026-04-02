@@ -2,6 +2,17 @@
 
 Code must be pure functions, cohesive, loosely coupled, and expressive. 100% per-file test coverage is non-negotiable -- the codebase should be so complete that extending it is impossible without the tests catching regressions.
 
+## Architecture Guardrails
+
+- The backend must stay detached from any concrete UI and expose a client-agnostic HTTP/OpenAPI contract.
+- Any UI must be replaceable as long as it consumes that contract.
+- Generated API types are transport-only and must not be treated as the frontend model layer.
+- Frontend models and ViewModels must stay separate responsibilities.
+- Frontend models own UI-facing semantics, parsing, normalization, derived values, and mapping from transport.
+- ViewModels own UI state, commands, async workflows, loading state, and error presentation.
+- Components consume ViewModels; they must not build their own transport mapping or business workflows.
+- If a design collapses models and ViewModels into the same type, it fails the architecture boundary.
+
 ---
 
 ## vitest-test-writer

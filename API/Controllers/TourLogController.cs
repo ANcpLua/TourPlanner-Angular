@@ -1,7 +1,8 @@
 using System.Net;
 using API.AOP;
+using API.Endpoints;
 using BL.DomainModel;
-using BL.Interface;
+using BL.Interfaces;
 using Contracts.TourLogs;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [ApiController]
-[Route("api/tourlog")]
+[Route(ApiRoute.TourLog.Pattern)]
 public class TourLogController(ITourLogService tourLogService, IMapper mapper) : ControllerBase
 {
     [ApiMethodDecorator]

@@ -4,17 +4,17 @@ using API.AOP;
 namespace Tests.API;
 
 [TestFixture]
-public class ApiMethodDecoratorTests
+public class ApiMethodDecoratorAttributeTests
 {
     [SetUp]
     public void SetUp()
     {
-        _decorator = new ApiMethodDecorator();
+        _decorator = new ApiMethodDecoratorAttribute();
         _mockLogger = new Mock<ILogger>();
         Log.Logger = _mockLogger.Object;
     }
 
-    private ApiMethodDecorator _decorator = null!;
+    private ApiMethodDecoratorAttribute _decorator = null!;
     private Mock<ILogger> _mockLogger = null!;
 
     [Test]

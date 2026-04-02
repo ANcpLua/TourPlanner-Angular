@@ -1,6 +1,6 @@
 ﻿using API.Controllers;
 using BL.DomainModel;
-using BL.Interface;
+using BL.Interfaces;
 using Contracts.Tours;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -25,8 +25,8 @@ public class TourControllerTests
     [Test]
     public async Task CreateTourAsync_HappyPath_ReturnsCreatedTour()
     {
-        var tourDto = TestData.SampleTourDto();
-        var tourDomain = TestData.SampleTourDomain();
+        var tourDto = TourTestData.SampleTourDto();
+        var tourDomain = TourTestData.SampleTourDomain();
         _mockMapper.Setup(m => m.Map<TourDomain>(tourDto)).Returns(tourDomain);
         _mockTourService.Setup(s => s.CreateTourAsync(tourDomain)).ReturnsAsync(tourDomain);
         _mockMapper.Setup(m => m.Map<TourDto>(tourDomain)).Returns(tourDto);
@@ -41,8 +41,8 @@ public class TourControllerTests
     [Test]
     public void GetAllTours_HappyPath_ReturnsAllTours()
     {
-        var toursDomain = TestData.SampleTourDomainList();
-        var toursDto = TestData.SampleTourDtoList();
+        var toursDomain = TourTestData.SampleTourDomainList();
+        var toursDto = TourTestData.SampleTourDtoList();
         _mockTourService.Setup(s => s.GetAllTours()).Returns(toursDomain);
         _mockMapper.Setup(m => m.Map<IEnumerable<TourDto>>(toursDomain)).Returns(toursDto);
 
@@ -57,8 +57,8 @@ public class TourControllerTests
     public void GetTourById_HappyPath_ReturnsTour()
     {
         var tourId = Guid.NewGuid();
-        var tourDomain = TestData.SampleTourDomain();
-        var tourDto = TestData.SampleTourDto();
+        var tourDomain = TourTestData.SampleTourDomain();
+        var tourDto = TourTestData.SampleTourDto();
         _mockTourService.Setup(s => s.GetTourById(tourId)).Returns(tourDomain);
         _mockMapper.Setup(m => m.Map<TourDto>(tourDomain)).Returns(tourDto);
 
@@ -84,9 +84,9 @@ public class TourControllerTests
     public async Task UpdateTourAsync_HappyPath_ReturnsUpdatedTour()
     {
         var tourId = Guid.NewGuid();
-        var tourDto = TestData.SampleTourDto();
+        var tourDto = TourTestData.SampleTourDto();
         tourDto.Id = tourId;
-        var tourDomain = TestData.SampleTourDomain();
+        var tourDomain = TourTestData.SampleTourDomain();
         _mockMapper.Setup(m => m.Map<TourDomain>(tourDto)).Returns(tourDomain);
         _mockTourService.Setup(s => s.UpdateTourAsync(tourDomain)).ReturnsAsync(tourDomain);
         _mockMapper.Setup(m => m.Map<TourDto>(tourDomain)).Returns(tourDto);
@@ -102,7 +102,7 @@ public class TourControllerTests
     public async Task UpdateTourAsync_UnhappyPath_IdMismatch()
     {
         var tourId = Guid.NewGuid();
-        var tourDto = TestData.SampleTourDto();
+        var tourDto = TourTestData.SampleTourDto();
         tourDto.Id = Guid.NewGuid();
 
         var result = await _controller.UpdateTour(tourId, tourDto);
@@ -126,9 +126,9 @@ public class TourControllerTests
     [Test]
     public void SearchTours_HappyPath_ReturnsMatchingTours()
     {
-        const string searchText = TestData.ValidSearchText;
-        var toursDomain = TestData.SampleTourDomainList().AsQueryable();
-        var toursDto = TestData.SampleTourDtoList();
+        const string searchText = TestConstants.ValidSearchText;
+        var toursDomain = TourTestData.SampleTourDomainList().AsQueryable();
+        var toursDto = TourTestData.SampleTourDtoList();
         _mockTourService.Setup(static s => s.SearchTours(searchText)).Returns(toursDomain);
         _mockMapper
             .Setup(static m => m.Map<IEnumerable<TourDto>>(It.IsAny<IEnumerable<TourDomain>>()))
@@ -144,7 +144,7 @@ public class TourControllerTests
     [Test]
     public void SearchTours_UnhappyPath_NoMatchingTours()
     {
-        const string searchText = TestData.InvalidSearchText;
+        const string searchText = TestConstants.InvalidSearchText;
         _mockTourService
             .Setup(static s => s.SearchTours(searchText))
             .Returns(new List<TourDomain>().AsQueryable());

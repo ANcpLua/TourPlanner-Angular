@@ -1,12 +1,12 @@
 using Autofac;
 using DAL.Adapter;
 using DAL.Infrastructure;
-using DAL.Interface;
+using DAL.Interfaces;
 using DAL.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace DAL.Module;
+namespace DAL.Modules;
 
 public class PostgreContextModule(IConfiguration configuration) : Autofac.Module
 {

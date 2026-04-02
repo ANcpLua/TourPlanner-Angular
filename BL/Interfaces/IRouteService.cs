@@ -1,10 +1,10 @@
-namespace DAL.Interface;
+namespace BL.Interfaces;
 
-public interface IRouteRepository
+public interface IRouteService
 {
     Task<(double Distance, double Duration)> ResolveRouteAsync(
         (double Latitude, double Longitude) from,
-        (double Latitude, double Longitude) to,
+        (double Latitude, double Longitude) destination,
         string transportType,
         CancellationToken cancellationToken = default
     );

@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using BL.Interface;
+using BL.Interfaces;
 
 namespace API.Infrastructure;
 

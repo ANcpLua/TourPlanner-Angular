@@ -9,11 +9,11 @@ public static class AuthEndpoints
 {
     public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var auth = endpoints.MapGroup("/api/auth").WithTags("Auth");
-        auth.MapPost("/register", RegisterAsync).AllowAnonymous();
-        auth.MapPost("/login", LoginAsync).AllowAnonymous();
-        auth.MapPost("/logout", LogoutAsync);
-        auth.MapGet("/me", GetCurrentUser);
+        var auth = endpoints.MapGroup(ApiRoute.Auth.Path).WithTags(ApiTag.Auth);
+        auth.MapPost(ApiRoute.Auth.Register, RegisterAsync).AllowAnonymous();
+        auth.MapPost(ApiRoute.Auth.Login, LoginAsync).AllowAnonymous();
+        auth.MapPost(ApiRoute.Auth.Logout, LogoutAsync).RequireAuthorization();
+        auth.MapGet(ApiRoute.Auth.Me, GetCurrentUser).RequireAuthorization();
         return endpoints;
     }
 
@@ -42,17 +42,24 @@ public static class AuthEndpoints
         SignInManager<IdentityUser> signInManager,
         UserManager<IdentityUser> userManager)
     {
-        var result = await signInManager.PasswordSignInAsync(
-            request.Email, request.Password, isPersistent: true, lockoutOnFailure: false);
-
-        if (!result.Succeeded)
-            return Results.Problem("Invalid email or password.", statusCode: StatusCodes.Status401Unauthorized);
-
         var user = await userManager.FindByEmailAsync(request.Email);
         if (user is null)
-            return Results.Problem("User not found after login.", statusCode: StatusCodes.Status500InternalServerError);
+            return Results.Problem("Invalid email or password.", statusCode: StatusCodes.Status401Unauthorized);
 
-        return Results.Ok(new UserInfo { UserId = user.Id, Email = user.Email ?? request.Email });
+        var result = await signInManager.PasswordSignInAsync(
+            user, request.Password, isPersistent: true, lockoutOnFailure: true);
+
+        return result switch
+        {
+            { IsLockedOut: true } => Results.Problem(
+                "Account locked due to too many failed attempts. Try again later.",
+                statusCode: StatusCodes.Status429TooManyRequests),
+            { Succeeded: true } => Results.Ok(new UserInfo
+            {
+                UserId = user.Id, Email = user.Email ?? request.Email
+            }),
+            _ => Results.Problem("Invalid email or password.", statusCode: StatusCodes.Status401Unauthorized)
+        };
     }
 
     internal static async Task<IResult> LogoutAsync(SignInManager<IdentityUser> signInManager)
@@ -68,7 +75,7 @@ public static class AuthEndpoints
                     ?? httpContext.User.FindFirstValue(ClaimTypes.Name);
 
         if (userId is null || email is null)
-            return Results.Problem("User not found.", statusCode: StatusCodes.Status401Unauthorized);
+            return Results.Problem("Required identity claims missing.", statusCode: StatusCodes.Status401Unauthorized);
 
         return Results.Ok(new UserInfo { UserId = userId, Email = email });
     }

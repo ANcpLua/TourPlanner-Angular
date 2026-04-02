@@ -1,6 +1,6 @@
 using System.Globalization;
 using BL.DomainModel;
-using BL.Interface;
+using BL.Interfaces;
 using QuestPDF;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;

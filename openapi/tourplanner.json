@@ -1,10 +1,84 @@
 {
   "openapi": "3.1.1",
   "info": {
-    "title": "API | v1",
-    "version": "1.0.0"
+    "title": "TourPlanner API",
+    "version": "v1"
   },
   "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          { }
+        ]
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          { }
+        ]
+      }
+    },
     "/api/routes/resolve": {
       "post": {
         "tags": [
@@ -31,7 +105,10 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       }
     },
     "/api/reports/summary": {
@@ -43,7 +120,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       }
     },
     "/api/reports/tour/{tourId}": {
@@ -63,10 +143,13 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "404": {
+            "description": "Not Found"
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       }
     },
     "/api/reports/export/{tourId}": {
@@ -86,26 +169,19 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "404": {
+            "description": "Not Found"
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       }
     },
     "/api/reports/import": {
       "post": {
         "tags": [
           "Reports"
-        ],
-        "parameters": [
-          {
-            "name": "json",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
         ],
         "responses": {
           "200": {
@@ -117,100 +193,21 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/auth/register": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
           },
           "400": {
             "description": "Bad Request",
             "content": {
-              "application/problem+json": {
+              "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                  "type": "string"
                 }
               }
             }
           }
-        }
-      }
-    },
-    "/api/auth/login": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginRequest"
-              }
-            }
-          },
-          "required": true
         },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserInfo"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/logout": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/auth/me": {
-      "get": {
-        "tags": [
-          "Auth"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserInfo"
-                }
-              }
-            }
-          }
-        }
+        "security": [
+          { }
+        ]
       }
     },
     "/api/tour": {
@@ -259,7 +256,10 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       },
       "get": {
         "tags": [
@@ -295,7 +295,10 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       }
     },
     "/api/tour/{id}": {
@@ -335,7 +338,10 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       },
       "put": {
         "tags": [
@@ -393,7 +399,10 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       },
       "delete": {
         "tags": [
@@ -414,7 +423,10 @@
           "204": {
             "description": "No Content"
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       }
     },
     "/api/tour/search/{searchText}": {
@@ -462,7 +474,10 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       }
     },
     "/api/tourlog": {
@@ -511,7 +526,10 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       }
     },
     "/api/tourlog/{id}": {
@@ -551,7 +569,10 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       },
       "put": {
         "tags": [
@@ -609,7 +630,10 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       },
       "delete": {
         "tags": [
@@ -630,7 +654,10 @@
           "204": {
             "description": "No Content"
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       }
     },
     "/api/tourlog/bytour/{tourId}": {
@@ -679,59 +706,15 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          { }
+        ]
       }
     }
   },
   "components": {
     "schemas": {
-      "HttpValidationProblemDetails": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "status": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "detail": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "instance": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "errors": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
       "LoginRequest": {
         "required": [
           "email",
@@ -758,6 +741,7 @@
             "type": "string"
           },
           "password": {
+            "minLength": 6,
             "type": "string"
           }
         }
@@ -775,7 +759,6 @@
           "fromLatitude": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
             "type": [
-              "null",
               "number",
               "string"
             ],
@@ -784,7 +767,6 @@
           "fromLongitude": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
             "type": [
-              "null",
               "number",
               "string"
             ],
@@ -793,7 +775,6 @@
           "toLatitude": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
             "type": [
-              "null",
               "number",
               "string"
             ],
@@ -802,7 +783,6 @@
           "toLongitude": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
             "type": [
-              "null",
               "number",
               "string"
             ],
@@ -994,33 +974,25 @@
             "format": "double"
           }
         }
-      },
-      "UserInfo": {
-        "required": [
-          "id",
-          "email"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          }
-        }
+      }
+    },
+    "securitySchemes": {
+      "cookie": {
+        "type": "apiKey",
+        "name": ".AspNetCore.Identity.Application",
+        "in": "cookie"
       }
     }
   },
   "tags": [
     {
+      "name": "Auth"
+    },
+    {
       "name": "Routes"
     },
     {
       "name": "Reports"
-    },
-    {
-      "name": "Auth"
     },
     {
       "name": "Tour"

@@ -1,5 +1,5 @@
 ﻿using BL.DomainModel;
-using BL.Interface;
+using BL.Interfaces;
 using BL.Service;
 
 namespace Tests.BL;
@@ -22,8 +22,8 @@ public class FileServiceTests
     [Test]
     public void GenerateTourReport_ValidTourId_ReturnsPdfBytes()
     {
-        var tourId = TestData.TestGuid;
-        var tour = TestData.SampleTourDomain();
+        var tourId = TestConstants.TestGuid;
+        var tour = TourTestData.SampleTourDomain();
         byte[] expectedPdfBytes =
         [
             1, 2, 3, 4, 5
@@ -42,7 +42,7 @@ public class FileServiceTests
     [Test]
     public void GenerateSummaryReport_ValidTours_ReturnsPdfBytes()
     {
-        var tours = TestData.SampleTourDomainList();
+        var tours = TourTestData.SampleTourDomainList();
         byte[] expectedPdfBytes =
         [
             1, 2, 3, 4, 5
@@ -59,8 +59,8 @@ public class FileServiceTests
     [Test]
     public void ExportTourToJson_ValidTourId_ReturnsTourDomain()
     {
-        var tourId = TestData.TestGuid;
-        var expectedTour = TestData.SampleTourDomain();
+        var tourId = TestConstants.TestGuid;
+        var expectedTour = TourTestData.SampleTourDomain();
 
         _mockTourService.Setup(s => s.GetTourById(tourId)).Returns(expectedTour);
 
@@ -75,7 +75,7 @@ public class FileServiceTests
     {
         List<TourDomain> largeTourList = [.. Enumerable
             .Range(0, 1000)
-            .Select(_ => TestData.SampleTourDomain())];
+            .Select(_ => TourTestData.SampleTourDomain())];
         var expectedPdfBytes = new byte[1024 * 1024];
 
         _mockPdfReportService
@@ -91,11 +91,11 @@ public class FileServiceTests
     [Test]
     public void ExportTourToJsonAsync_TourWithLargeLogs_HandlesLargeDataSet()
     {
-        var tourId = TestData.TestGuid;
-        var tourWithLargeLogs = TestData.SampleTourDomain();
+        var tourId = TestConstants.TestGuid;
+        var tourWithLargeLogs = TourTestData.SampleTourDomain();
         tourWithLargeLogs.Logs = [.. Enumerable
             .Range(0, 10000)
-            .Select(_ => TestData.SampleTourLogDomain())];
+            .Select(_ => TourLogTestData.SampleTourLogDomain())];
 
         _mockTourService.Setup(s => s.GetTourById(tourId)).Returns(tourWithLargeLogs);
 
@@ -112,7 +112,7 @@ public class FileServiceTests
     [Test]
     public void ExportTourToJson_InvalidTourId_ReturnsNull()
     {
-        var invalidTourId = TestData.NonexistentGuid;
+        var invalidTourId = TestConstants.NonexistentGuid;
         _mockTourService.Setup(s => s.GetTourById(invalidTourId)).Returns((TourDomain?)null);
 
         var result = _fileService.ExportTourToJson(invalidTourId);
@@ -124,7 +124,7 @@ public class FileServiceTests
     [Test]
     public void GenerateTourReport_InvalidTourId_ReturnsNull()
     {
-        var invalidTourId = TestData.NonexistentGuid;
+        var invalidTourId = TestConstants.NonexistentGuid;
         _mockTourService.Setup(s => s.GetTourById(invalidTourId)).Returns((TourDomain?)null);
 
         var result = _fileService.GenerateTourReport(invalidTourId);
@@ -136,8 +136,8 @@ public class FileServiceTests
     [Test]
     public async Task ImportTourFromJsonAsync_ValidJson_CreatesTour()
     {
-        var expectedTour = TestData.SampleTourDomain();
-        var json = TestData.SampleTourDomainJson();
+        var expectedTour = TourTestData.SampleTourDomain();
+        var json = TourTestData.SampleTourDomainJson();
 
         _mockTourService
             .Setup(s => s.CreateTourAsync(It.IsAny<TourDomain>(), It.IsAny<CancellationToken>()))

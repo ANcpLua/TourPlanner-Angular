@@ -1,6 +1,6 @@
 ﻿using BL.DomainModel;
 
-namespace BL.Interface;
+namespace BL.Interfaces;
 
 public interface IPdfReportService
 {

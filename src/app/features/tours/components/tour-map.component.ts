@@ -8,9 +8,9 @@ import {
   input,
   signal,
   viewChild,
-  afterNextRender,
 } from '@angular/core';
-import * as L from 'leaflet';
+import type * as Leaflet from 'leaflet';
+import { LEAFLET } from './leaflet.token';
 
 @Component({
   selector: 'app-tour-map',
@@ -20,6 +20,7 @@ import * as L from 'leaflet';
 })
 export class TourMapComponent {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly leaflet = inject(LEAFLET);
 
   readonly fromLat = input<number | null>(null);
   readonly fromLng = input<number | null>(null);
@@ -28,16 +29,16 @@ export class TourMapComponent {
 
   protected readonly mapContainer = viewChild<ElementRef>('mapEl');
 
-  private map: L.Map | null = null;
-  private routeLayer = L.layerGroup();
+  private map: Leaflet.Map | null = null;
+  private routeLayer: Leaflet.LayerGroup | null = null;
 
-  private readonly startIcon = L.divIcon({
+  private readonly startIcon = this.leaflet.divIcon({
     html: '<div style="background:#16a34a;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.3)"></div>',
     iconSize: [14, 14],
     className: '',
   });
 
-  private readonly endIcon = L.divIcon({
+  private readonly endIcon = this.leaflet.divIcon({
     html: '<div style="background:#dc2626;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.3)"></div>',
     iconSize: [14, 14],
     className: '',
@@ -46,45 +47,61 @@ export class TourMapComponent {
   protected readonly isVisible = signal(false);
 
   constructor() {
-    afterNextRender(() => this.initMap());
-
     effect(() => {
+      const container = this.mapContainer()?.nativeElement;
+      const isVisible = this.isVisible();
       const from = { lat: this.fromLat(), lng: this.fromLng() };
       const to = { lat: this.toLat(), lng: this.toLng() };
+
+      if (!isVisible || !container) {
+        this.disposeMap();
+        return;
+      }
+
+      const mapWasCreated = this.ensureMap(container);
       this.updateRoute(from, to);
+
+      if (mapWasCreated) {
+        setTimeout(() => this.map?.invalidateSize(), 0);
+      }
     });
 
-    this.destroyRef.onDestroy(() => this.map?.remove());
+    this.destroyRef.onDestroy(() => this.disposeMap());
   }
 
   protected toggle(): void {
     this.isVisible.update((v) => !v);
-    if (this.isVisible()) {
-      setTimeout(() => this.map?.invalidateSize(), 0);
-    }
   }
 
-  private initMap(): void {
-    const container = this.mapContainer();
-    if (!container) return;
+  private ensureMap(container: HTMLDivElement): boolean {
+    if (this.map) {
+      return false;
+    }
 
-    this.map = L.map(container.nativeElement, {
+    this.map = this.leaflet.map(container, {
       center: [48.2082, 16.3738],
       zoom: 5,
     });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    this.leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
     }).addTo(this.map);
 
-    this.routeLayer.addTo(this.map);
+    this.routeLayer = this.leaflet.layerGroup().addTo(this.map);
+    return true;
+  }
+
+  private disposeMap(): void {
+    this.routeLayer = null;
+    this.map?.remove();
+    this.map = null;
   }
 
   private updateRoute(
     from: { lat: number | null; lng: number | null },
     to: { lat: number | null; lng: number | null },
   ): void {
-    if (!this.map) return;
+    if (!this.map || !this.routeLayer) return;
 
     this.routeLayer.clearLayers();
 
@@ -92,18 +109,18 @@ export class TourMapComponent {
       return;
     }
 
-    const fromLatLng = L.latLng(from.lat, from.lng);
-    const toLatLng = L.latLng(to.lat, to.lng);
+    const fromLatLng = this.leaflet.latLng(from.lat, from.lng);
+    const toLatLng = this.leaflet.latLng(to.lat, to.lng);
 
-    L.marker(fromLatLng, { icon: this.startIcon }).addTo(this.routeLayer);
-    L.marker(toLatLng, { icon: this.endIcon }).addTo(this.routeLayer);
+    this.leaflet.marker(fromLatLng, { icon: this.startIcon }).addTo(this.routeLayer);
+    this.leaflet.marker(toLatLng, { icon: this.endIcon }).addTo(this.routeLayer);
 
-    L.polyline([fromLatLng, toLatLng], {
+    this.leaflet.polyline([fromLatLng, toLatLng], {
       color: '#8d5a21',
       weight: 3,
       dashArray: '8 4',
     }).addTo(this.routeLayer);
 
-    this.map.fitBounds(L.latLngBounds([fromLatLng, toLatLng]), { padding: [40, 40] });
+    this.map.fitBounds(this.leaflet.latLngBounds([fromLatLng, toLatLng]), { padding: [40, 40] });
   }
 }

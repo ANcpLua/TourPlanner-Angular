@@ -1,5 +1,5 @@
 using API.Endpoints;
-using BL.Interface;
+using BL.Interfaces;
 using Contracts.Routes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.HttpResults;

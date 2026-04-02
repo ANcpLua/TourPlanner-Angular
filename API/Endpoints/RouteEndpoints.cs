@@ -1,4 +1,4 @@
-using BL.Interface;
+using BL.Interfaces;
 using Contracts.Routes;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -8,8 +8,8 @@ public static class RouteEndpoints
 {
     public static IEndpointRouteBuilder MapRouteEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var routes = endpoints.MapGroup("/api/routes").WithTags("Routes");
-        routes.MapPost("/resolve", ResolveRoute);
+        var routes = endpoints.MapGroup(ApiRoute.Routes.Path).WithTags(ApiTag.Routes);
+        routes.MapPost(ApiRoute.Routes.Resolve, ResolveRoute);
         return endpoints;
     }
 

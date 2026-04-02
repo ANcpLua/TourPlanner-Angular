@@ -1,10 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { BROWSER_LOCATION, BrowserLocation } from '../../core/browser/browser-location.token';
 import { AppNavbarComponent } from './app-navbar.component';
 import { AuthState } from '../../core/auth/auth-state.service';
 
 describe('AppNavbarComponent', () => {
   let authState: Record<string, ReturnType<typeof vi.fn>>;
+  let location: BrowserLocation;
 
   beforeEach(async () => {
     authState = {
@@ -12,22 +14,18 @@ describe('AppNavbarComponent', () => {
       currentUser: vi.fn(() => null),
       logout: vi.fn(() => Promise.resolve()),
     };
+    location = {
+      assign: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [AppNavbarComponent],
       providers: [
         provideRouter([]),
         { provide: AuthState, useValue: authState },
+        { provide: BROWSER_LOCATION, useValue: location },
       ],
     }).compileComponents();
-  });
-
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
-  beforeEach(() => {
-    vi.stubGlobal('location', { href: '' });
   });
 
   it('should hide nav links when not authenticated', () => {
@@ -80,6 +78,6 @@ describe('AppNavbarComponent', () => {
     await fixture.whenStable();
 
     expect(authState['logout']).toHaveBeenCalled();
-    expect(location.href).toBe('/login');
+    expect(location.assign).toHaveBeenCalledWith('/login');
   });
 });

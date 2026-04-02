@@ -6,10 +6,13 @@
     "start": "./node_modules/.bin/ng serve --port 7226 --proxy-config proxy.conf.json",
     "build": "./node_modules/.bin/ng build",
     "watch": "./node_modules/.bin/ng build --watch --configuration development",
-    "test": "./node_modules/.bin/ng test",
-    "generate:openapi": "dotnet build API/API.csproj -tlp:ErrorsOnly",
+    "test": "./node_modules/.bin/ng test --watch=false",
+    "test:watch": "./node_modules/.bin/ng test",
+    "test:api": "dotnet test --project Tests/Tests.csproj --no-restore -- --output Detailed --no-progress --timeout 300s",
+    "generate:openapi": "node -e \"const fs = require('node:fs'); fs.rmSync('openapi/tourplanner.json', { force: true }); fs.rmSync('API/obj/API.OpenApiFiles.cache', { force: true });\" && dotnet build API/API.csproj -tlp:ErrorsOnly && node -e \"if (!require('node:fs').existsSync('openapi/tourplanner.json')) { console.error('openapi/tourplanner.json was not generated'); process.exit(1); }\"",
     "generate:types": "./node_modules/.bin/openapi-typescript ./openapi/tourplanner.json -o src/app/core/api/generated/api-types.ts",
-    "generate": "npm run generate:openapi && npm run generate:types"
+    "generate": "npm run generate:openapi && npm run generate:types",
+    "verify": "npm run generate && npm run build && npm test && npm run test:api"
   },
   "private": true,
   "engines": {
@@ -24,8 +27,11 @@
     "@angular/forms": "^21.2.0",
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
+    "@tailwindcss/postcss": "^4.2.2",
     "leaflet": "^1.9.4",
+    "postcss": "^8.5.8",
     "rxjs": "~7.8.0",
+    "tailwindcss": "^4.2.2",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

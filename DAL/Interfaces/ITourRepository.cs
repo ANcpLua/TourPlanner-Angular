@@ -1,6 +1,6 @@
 using DAL.PersistenceModel;
 
-namespace DAL.Interface;
+namespace DAL.Interfaces;
 
 public interface ITourRepository
 {

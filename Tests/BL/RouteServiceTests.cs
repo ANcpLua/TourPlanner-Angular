@@ -1,5 +1,5 @@
 using BL.Service;
-using DAL.Interface;
+using DAL.Interfaces;
 
 namespace Tests.BL;
 

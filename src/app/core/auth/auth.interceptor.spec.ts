@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptors, HttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { BROWSER_LOCATION, BrowserLocation } from '../browser/browser-location.token';
 import { API_BASE_URL } from '../config/api-base-url.token';
 import { authInterceptor } from './auth.interceptor';
 import { AuthState } from './auth-state.service';
@@ -13,13 +14,19 @@ describe('authInterceptor', () => {
   let http: HttpClient;
   let httpTesting: HttpTestingController;
   let authState: AuthState;
+  let location: BrowserLocation;
 
   beforeEach(() => {
+    location = {
+      assign: vi.fn(),
+    };
+
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting(),
         { provide: API_BASE_URL, useValue: baseUrl },
+        { provide: BROWSER_LOCATION, useValue: location },
       ],
     });
 
@@ -61,6 +68,7 @@ describe('authInterceptor', () => {
     req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
 
     expect(authState.clear).toHaveBeenCalled();
+    expect(location.assign).toHaveBeenCalledWith('/login');
   });
 
   it('should not clear auth state on 401 for auth URLs', () => {
@@ -74,5 +82,6 @@ describe('authInterceptor', () => {
     req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
 
     expect(authState.clear).not.toHaveBeenCalled();
+    expect(location.assign).not.toHaveBeenCalled();
   });
 });

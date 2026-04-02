@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using DAL.Infrastructure;
-using DAL.Interface;
-using DAL.Module;
+using DAL.Interfaces;
+using DAL.Modules;
 using DAL.Repository;
 
 namespace Tests.DAL;

@@ -40,20 +40,20 @@ public class OpenRouteServiceRepositoryTests
     [TestCase("Foot", "foot-walking")]
     public async Task ResolveRouteAsync_TransportTypes_MapsToCorrectEndpoint(string transportType, string expectedEndpoint)
     {
-        TestData.SetupHttpMessageHandlerSuccess(_mockHandler, ValidRouteResponse);
+        HttpTestHelper.SetupSuccess(_mockHandler, ValidRouteResponse);
 
-        await _sut.ResolveRouteAsync(TestData.TestCoordinates, (52.52, 13.405), transportType);
+        await _sut.ResolveRouteAsync(TestConstants.TestCoordinates, (52.52, 13.405), transportType);
 
-        TestData.VerifyHttpPostRequest(_mockHandler, $"v2/directions/{expectedEndpoint}");
+        HttpTestHelper.VerifyPostRequest(_mockHandler, $"v2/directions/{expectedEndpoint}");
     }
 
     [Test]
     public async Task ResolveRouteAsync_ValidResponse_ReturnsDistanceAndDuration()
     {
-        TestData.SetupHttpMessageHandlerSuccess(_mockHandler, ValidRouteResponse);
+        HttpTestHelper.SetupSuccess(_mockHandler, ValidRouteResponse);
 
         var (distance, duration) = await _sut.ResolveRouteAsync(
-            TestData.TestCoordinates, (52.52, 13.405), "Car");
+            TestConstants.TestCoordinates, (52.52, 13.405), "Car");
 
         using (Assert.EnterMultipleScope())
         {
@@ -65,38 +65,38 @@ public class OpenRouteServiceRepositoryTests
     [Test]
     public async Task ResolveRouteAsync_SetsAuthorizationAndAcceptHeaders()
     {
-        TestData.SetupHttpMessageHandlerSuccess(_mockHandler, ValidRouteResponse);
+        HttpTestHelper.SetupSuccess(_mockHandler, ValidRouteResponse);
 
-        await _sut.ResolveRouteAsync(TestData.TestCoordinates, (52.52, 13.405), "Car");
+        await _sut.ResolveRouteAsync(TestConstants.TestCoordinates, (52.52, 13.405), "Car");
 
-        TestData.VerifyHttpRequestHeaders(_mockHandler, "test-api-key");
+        HttpTestHelper.VerifyRequestHeaders(_mockHandler, "test-api-key");
     }
 
     [Test]
     public async Task ResolveRouteAsync_PostsToCorrectEndpoint()
     {
-        TestData.SetupHttpMessageHandlerSuccess(_mockHandler, ValidRouteResponse);
+        HttpTestHelper.SetupSuccess(_mockHandler, ValidRouteResponse);
 
         await _sut.ResolveRouteAsync((48.2082, 16.3738), (52.52, 13.405), "Car");
 
-        TestData.VerifyHttpPostRequest(_mockHandler, "v2/directions/driving-car");
+        HttpTestHelper.VerifyPostRequest(_mockHandler, "v2/directions/driving-car");
     }
 
     [Test]
     public void ResolveRouteAsync_UnsupportedTransportType_ThrowsArgumentOutOfRangeException()
     {
         Assert.That(
-            () => _sut.ResolveRouteAsync(TestData.TestCoordinates, (52.52, 13.405), "Segway"),
+            () => _sut.ResolveRouteAsync(TestConstants.TestCoordinates, (52.52, 13.405), "Segway"),
             Throws.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
     public void ResolveRouteAsync_ServerError_ThrowsHttpRequestException()
     {
-        TestData.SetupHttpMessageHandlerError(_mockHandler, HttpStatusCode.InternalServerError, "Server Error");
+        HttpTestHelper.SetupError(_mockHandler, HttpStatusCode.InternalServerError, "Server Error");
 
         Assert.That(
-            () => _sut.ResolveRouteAsync(TestData.TestCoordinates, (52.52, 13.405), "Car"),
+            () => _sut.ResolveRouteAsync(TestConstants.TestCoordinates, (52.52, 13.405), "Car"),
             Throws.TypeOf<HttpRequestException>());
     }
 
@@ -106,7 +106,7 @@ public class OpenRouteServiceRepositoryTests
         _mockConfig.Setup(static c => c["AppSettings:OpenRouteServiceApiKey"]).Returns((string?)null);
 
         Assert.That(
-            () => _sut.ResolveRouteAsync(TestData.TestCoordinates, (52.52, 13.405), "Car"),
+            () => _sut.ResolveRouteAsync(TestConstants.TestCoordinates, (52.52, 13.405), "Car"),
             Throws.TypeOf<InvalidOperationException>());
     }
 
@@ -116,7 +116,7 @@ public class OpenRouteServiceRepositoryTests
         _mockConfig.Setup(static c => c["AppSettings:OpenRouteServiceApiBaseUrl"]).Returns((string?)null);
 
         Assert.That(
-            () => _sut.ResolveRouteAsync(TestData.TestCoordinates, (52.52, 13.405), "Car"),
+            () => _sut.ResolveRouteAsync(TestConstants.TestCoordinates, (52.52, 13.405), "Car"),
             Throws.TypeOf<InvalidOperationException>());
     }
 }

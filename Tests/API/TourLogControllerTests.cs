@@ -1,6 +1,6 @@
 ﻿using API.Controllers;
 using BL.DomainModel;
-using BL.Interface;
+using BL.Interfaces;
 using Contracts.TourLogs;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -25,8 +25,8 @@ public class TourLogControllerTests
     [Test]
     public async Task CreateTourLogAsync_HappyPath_ReturnsCreatedTourLog()
     {
-        var tourLogDto = TestData.SampleTourLogDto();
-        var tourLogDomain = TestData.SampleTourLogDomain();
+        var tourLogDto = TourLogTestData.SampleTourLogDto();
+        var tourLogDomain = TourLogTestData.SampleTourLogDomain();
         _mockMapper.Setup(m => m.Map<TourLogDomain>(tourLogDto)).Returns(tourLogDomain);
         _mockTourLogService
             .Setup(s => s.CreateTourLogAsync(tourLogDomain, It.IsAny<CancellationToken>()))
@@ -44,8 +44,8 @@ public class TourLogControllerTests
     public void GetTourLogById_HappyPath_ReturnsTourLog()
     {
         var tourLogId = Guid.NewGuid();
-        var tourLogDomain = TestData.SampleTourLogDomain();
-        var tourLogDto = TestData.SampleTourLogDto();
+        var tourLogDomain = TourLogTestData.SampleTourLogDomain();
+        var tourLogDto = TourLogTestData.SampleTourLogDto();
         _mockTourLogService.Setup(s => s.GetTourLogById(tourLogId)).Returns(tourLogDomain);
         _mockMapper.Setup(m => m.Map<TourLogDto>(tourLogDomain)).Returns(tourLogDto);
 
@@ -59,7 +59,7 @@ public class TourLogControllerTests
     [Test]
     public void GetTourLogById_UnhappyPath_TourLogNotFound()
     {
-        var tourLogId = TestData.NonexistentGuid;
+        var tourLogId = TestConstants.NonexistentGuid;
         _mockTourLogService.Setup(s => s.GetTourLogById(tourLogId)).Returns((TourLogDomain)null!);
 
         var result = _controller.GetTourLogById(tourLogId);
@@ -71,8 +71,8 @@ public class TourLogControllerTests
     public void GetTourLogsByTourId_HappyPath_ReturnsTourLogs()
     {
         var tourId = Guid.NewGuid();
-        var tourLogsDomain = TestData.SampleTourLogDomainList();
-        var tourLogsDto = TestData.SampleTourLogDtoList();
+        var tourLogsDomain = TourLogTestData.SampleTourLogDomainList();
+        var tourLogsDto = TourLogTestData.SampleTourLogDtoList();
         _mockTourLogService
             .Setup(s => s.GetTourLogsByTourId(tourId))
             .Returns(tourLogsDomain);
@@ -89,8 +89,8 @@ public class TourLogControllerTests
     public async Task UpdateTourLogAsync_HappyPath_ReturnsUpdatedTourLog()
     {
         var tourLogId = Guid.NewGuid();
-        var tourLogDto = TestData.SampleTourLogDto();
-        var tourLogDomain = TestData.SampleTourLogDomain();
+        var tourLogDto = TourLogTestData.SampleTourLogDto();
+        var tourLogDomain = TourLogTestData.SampleTourLogDomain();
         _mockMapper.Setup(m => m.Map<TourLogDomain>(tourLogDto)).Returns(tourLogDomain);
         _mockTourLogService
             .Setup(s => s.UpdateTourLogAsync(tourLogDomain, It.IsAny<CancellationToken>()))

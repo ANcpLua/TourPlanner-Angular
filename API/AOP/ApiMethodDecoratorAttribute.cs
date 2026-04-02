@@ -8,7 +8,7 @@ namespace API.AOP;
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Assembly |
                 AttributeTargets.Module)]
-public class ApiMethodDecorator : Attribute, IMethodDecorator
+public class ApiMethodDecoratorAttribute : Attribute, IMethodDecorator
 {
     // Fody instantiates per call — mutable fields are safe here
     private ILogger _logger = Log.Logger;

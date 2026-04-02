@@ -1,6 +1,6 @@
 using BL.DomainModel;
-using BL.Interface;
-using DAL.Interface;
+using BL.Interfaces;
+using DAL.Interfaces;
 using DAL.PersistenceModel;
 using MapsterMapper;
 

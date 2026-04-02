@@ -3,7 +3,7 @@ using BL.Mapper;
 using Mapster;
 using MapsterMapper;
 
-namespace BL.Module;
+namespace BL.Modules;
 
 public class OrmModule : Autofac.Module
 {

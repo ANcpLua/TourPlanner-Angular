@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using DAL.Interface;
+using DAL.Interfaces;
 using Microsoft.Extensions.Configuration;
 
 namespace DAL.Adapter;
@@ -10,7 +10,7 @@ public class OpenRouteServiceRepository(IHttpClientFactory httpClientFactory, IC
 {
     public async Task<(double Distance, double Duration)> ResolveRouteAsync(
         (double Latitude, double Longitude) from,
-        (double Latitude, double Longitude) to,
+        (double Latitude, double Longitude) destination,
         string transportType,
         CancellationToken cancellationToken = default
     )
@@ -28,7 +28,7 @@ public class OpenRouteServiceRepository(IHttpClientFactory httpClientFactory, IC
         using var content = new StringContent(
             JsonSerializer.Serialize(new
             {
-                coordinates = (double[][])[[from.Longitude, from.Latitude], [to.Longitude, to.Latitude]]
+                coordinates = (double[][])[[from.Longitude, from.Latitude], [destination.Longitude, destination.Latitude]]
             }),
             Encoding.UTF8,
             "application/json"

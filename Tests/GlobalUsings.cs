@@ -5,3 +5,4 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Moq;
 global using Moq.Protected;
 global using Serilog;
+global using Tests.Fixtures;

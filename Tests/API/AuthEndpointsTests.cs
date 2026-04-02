@@ -27,7 +27,7 @@ public class AuthEndpointsTests
     {
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, TestData.TestUserId),
+            new Claim(ClaimTypes.NameIdentifier, TestConstants.TestUserId),
             new Claim(ClaimTypes.Email, "test@example.com")
         };
         var httpContext = new DefaultHttpContext
@@ -41,7 +41,7 @@ public class AuthEndpointsTests
         var okResult = (Ok<Contracts.Auth.UserInfo>)result;
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(okResult.Value!.UserId, Is.EqualTo(TestData.TestUserId));
+            Assert.That(okResult.Value!.UserId, Is.EqualTo(TestConstants.TestUserId));
             Assert.That(okResult.Value.Email, Is.EqualTo("test@example.com"));
         }
     }
@@ -51,7 +51,7 @@ public class AuthEndpointsTests
     {
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, TestData.TestUserId),
+            new Claim(ClaimTypes.NameIdentifier, TestConstants.TestUserId),
             new Claim(ClaimTypes.Name, "user@test.com")
         };
         var httpContext = new DefaultHttpContext
@@ -82,7 +82,7 @@ public class AuthEndpointsTests
     [Test]
     public void GetCurrentUser_WithUserIdButNoEmail_Returns401()
     {
-        var claims = new[] { new Claim(ClaimTypes.NameIdentifier, TestData.TestUserId) };
+        var claims = new[] { new Claim(ClaimTypes.NameIdentifier, TestConstants.TestUserId) };
         var httpContext = new DefaultHttpContext
         {
             User = new ClaimsPrincipal(new ClaimsIdentity(claims, "test"))

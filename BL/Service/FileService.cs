@@ -1,11 +1,13 @@
 using System.Text.Json;
 using BL.DomainModel;
-using BL.Interface;
+using BL.Interfaces;
 
 namespace BL.Service;
 
 public class FileService(ITourService tourService, IPdfReportService pdfReportService) : IFileService
 {
+    private static readonly JsonSerializerOptions ImportJsonOptions = new(JsonSerializerDefaults.Web);
+
     public byte[]? GenerateTourReport(Guid tourId)
     {
         var tour = tourService.GetTourById(tourId);
@@ -23,7 +25,7 @@ public class FileService(ITourService tourService, IPdfReportService pdfReportSe
         TourDomain? tour;
         try
         {
-            tour = JsonSerializer.Deserialize<TourDomain>(json);
+            tour = JsonSerializer.Deserialize<TourDomain>(json, ImportJsonOptions);
         }
         catch (JsonException)
         {

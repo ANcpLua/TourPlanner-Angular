@@ -1,9 +1,9 @@
 using Autofac;
-using BL.Interface;
+using BL.Interfaces;
 using BL.Service;
 using Microsoft.Extensions.Configuration;
 
-namespace BL.Module;
+namespace BL.Modules;
 
 public class BusinessLogicModule(IConfiguration configuration) : Autofac.Module
 {

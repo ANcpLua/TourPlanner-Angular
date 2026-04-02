@@ -30,16 +30,16 @@ public class TourLogRepositoryTests
     [Test]
     public async Task CreateTourLogAsync_WithValidTourLog_ReturnsSavedTourLog()
     {
-        var tourLog = TestData.SampleTourLogPersistence();
+        var tourLog = TourLogTestData.SampleTourLogPersistence();
 
-        var result = await _repository.CreateTourLogAsync(tourLog, TestData.TestUserId);
+        var result = await _repository.CreateTourLogAsync(tourLog, TestConstants.TestUserId);
         var logCount = await _context.TourLogsPersistence.CountAsync();
 
         Assert.That(result, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Id, Is.EqualTo(tourLog.Id));
-            Assert.That(result.UserId, Is.EqualTo(TestData.TestUserId));
+            Assert.That(result.UserId, Is.EqualTo(TestConstants.TestUserId));
             Assert.That(logCount, Is.EqualTo(1));
         }
     }
@@ -47,11 +47,11 @@ public class TourLogRepositoryTests
     [Test]
     public void GetTourLogsByTourId_WithExistingTourId_ReturnsAllTourLogs()
     {
-        var tourLogs = TestData.SampleTourLogPersistenceList();
+        var tourLogs = TourLogTestData.SampleTourLogPersistenceList();
         _context.TourLogsPersistence.AddRange(tourLogs);
         _context.SaveChanges();
 
-        var result = _repository.GetTourLogsByTourId(TestData.TestGuid, TestData.TestUserId).ToList();
+        var result = _repository.GetTourLogsByTourId(TestConstants.TestGuid, TestConstants.TestUserId).ToList();
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Has.Count.EqualTo(tourLogs.Count));
@@ -62,7 +62,7 @@ public class TourLogRepositoryTests
     {
         var nonExistentTourId = Guid.NewGuid();
 
-        var result = _repository.GetTourLogsByTourId(nonExistentTourId, TestData.TestUserId);
+        var result = _repository.GetTourLogsByTourId(nonExistentTourId, TestConstants.TestUserId);
 
         Assert.That(result, Is.Empty);
     }
@@ -70,11 +70,11 @@ public class TourLogRepositoryTests
     [Test]
     public void GetTourLogsByTourId_WithDifferentUser_ReturnsEmpty()
     {
-        var tourLogs = TestData.SampleTourLogPersistenceList();
+        var tourLogs = TourLogTestData.SampleTourLogPersistenceList();
         _context.TourLogsPersistence.AddRange(tourLogs);
         _context.SaveChanges();
 
-        var result = _repository.GetTourLogsByTourId(TestData.TestGuid, "other-user-id").ToList();
+        var result = _repository.GetTourLogsByTourId(TestConstants.TestGuid, "other-user-id").ToList();
 
         Assert.That(result, Is.Empty);
     }
@@ -82,11 +82,11 @@ public class TourLogRepositoryTests
     [Test]
     public void GetTourLogById_WithExistingId_ReturnsTourLog()
     {
-        var tourLog = TestData.SampleTourLogPersistence();
+        var tourLog = TourLogTestData.SampleTourLogPersistence();
         _context.TourLogsPersistence.Add(tourLog);
         _context.SaveChanges();
 
-        var result = _repository.GetTourLogById(tourLog.Id, TestData.TestUserId);
+        var result = _repository.GetTourLogById(tourLog.Id, TestConstants.TestUserId);
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Id, Is.EqualTo(tourLog.Id));
@@ -97,7 +97,7 @@ public class TourLogRepositoryTests
     {
         var nonExistingId = Guid.NewGuid();
 
-        var result = _repository.GetTourLogById(nonExistingId, TestData.TestUserId);
+        var result = _repository.GetTourLogById(nonExistingId, TestConstants.TestUserId);
 
         Assert.That(result, Is.Null);
     }
@@ -105,12 +105,12 @@ public class TourLogRepositoryTests
     [Test]
     public async Task UpdateTourLogAsync_WithExistingTourLog_ReturnsUpdatedTourLog()
     {
-        var tourLog = TestData.SampleTourLogPersistence();
+        var tourLog = TourLogTestData.SampleTourLogPersistence();
         _context.TourLogsPersistence.Add(tourLog);
         await _context.SaveChangesAsync();
         tourLog.Comment = "Updated comment";
 
-        var result = await _repository.UpdateTourLogAsync(tourLog, TestData.TestUserId);
+        var result = await _repository.UpdateTourLogAsync(tourLog, TestConstants.TestUserId);
         var dbTourLog = await _context.TourLogsPersistence
             .FirstAsync(t => t.Id == tourLog.Id);
 
@@ -125,11 +125,11 @@ public class TourLogRepositoryTests
     [Test]
     public async Task DeleteTourLogAsync_WithExistingId_RemovesTourLogFromDatabase()
     {
-        var tourLog = TestData.SampleTourLogPersistence();
+        var tourLog = TourLogTestData.SampleTourLogPersistence();
         _context.TourLogsPersistence.Add(tourLog);
         await _context.SaveChangesAsync();
 
-        await _repository.DeleteTourLogAsync(tourLog.Id, TestData.TestUserId);
+        await _repository.DeleteTourLogAsync(tourLog.Id, TestConstants.TestUserId);
 
         Assert.That(await _context.TourLogsPersistence.CountAsync(), Is.Zero);
     }
@@ -137,7 +137,7 @@ public class TourLogRepositoryTests
     [Test]
     public async Task DeleteTourLogAsync_WithDifferentUser_DoesNotDelete()
     {
-        var tourLog = TestData.SampleTourLogPersistence();
+        var tourLog = TourLogTestData.SampleTourLogPersistence();
         _context.TourLogsPersistence.Add(tourLog);
         await _context.SaveChangesAsync();
 

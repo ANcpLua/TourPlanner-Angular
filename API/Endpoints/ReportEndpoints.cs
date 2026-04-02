@@ -1,5 +1,6 @@
+using System.IO;
 using System.Text.Json;
-using BL.Interface;
+using BL.Interfaces;
 using Contracts.Tours;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -16,11 +17,11 @@ public static class ReportEndpoints
 
     public static IEndpointRouteBuilder MapReportEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var reports = endpoints.MapGroup("/api/reports").WithTags("Reports");
-        reports.MapGet("/summary", GetSummaryReport);
-        reports.MapGet("/tour/{tourId:guid}", GetTourReport);
-        reports.MapGet("/export/{tourId:guid}", ExportTourToJson);
-        reports.MapPost("/import", ImportTourFromJsonAsync);
+        var reports = endpoints.MapGroup(ApiRoute.Reports.Path).WithTags(ApiTag.Reports);
+        reports.MapGet(ApiRoute.Reports.Summary, GetSummaryReport);
+        reports.MapGet($"{ApiRoute.Reports.TourReport}/{{tourId:guid}}", GetTourReport);
+        reports.MapGet($"{ApiRoute.Reports.Export}/{{tourId:guid}}", ExportTourToJson);
+        reports.MapPost(ApiRoute.Reports.Import, ImportTourFromJsonAsync);
         return endpoints;
     }
 
@@ -54,10 +55,13 @@ public static class ReportEndpoints
     }
 
     internal static async Task<Results<Ok<string>, BadRequest<string>>> ImportTourFromJsonAsync(
-        string json,
+        HttpRequest request,
         IFileService fileService,
         CancellationToken cancellationToken)
     {
+        using var reader = new StreamReader(request.Body);
+        var json = await reader.ReadToEndAsync(cancellationToken);
+
         return await fileService.ImportTourFromJsonAsync(json, cancellationToken)
             ? TypedResults.Ok("Tour imported successfully")
             : TypedResults.BadRequest("Invalid or empty tour data.");

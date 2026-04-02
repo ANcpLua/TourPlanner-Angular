@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using BL.Module;
+using BL.Modules;
 using Mapster;
 using MapsterMapper;
 

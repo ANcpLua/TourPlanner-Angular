@@ -61,10 +61,11 @@ docker compose up -d postgres
 dotnet watch --project API
 ```
 
-3. Install frontend dependencies and start (separate terminal):
+3. Install frontend dependencies, regenerate the OpenAPI client types, and start the frontend (separate terminal):
 
 ```bash
 npm ci
+npm run generate
 npm start
 ```
 
@@ -73,6 +74,7 @@ Open http://localhost:7226.
 ## Build
 
 ```bash
+npm run generate
 dotnet build API/API.csproj
 npm run build
 ```
@@ -81,6 +83,13 @@ npm run build
 
 ```bash
 npm test
+npm run test:api
+```
+
+Run the full local verification pipeline:
+
+```bash
+npm run verify
 ```
 
 ## Architecture
