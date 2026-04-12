@@ -128,6 +128,30 @@ describe('TourMapComponent', () => {
     expect(leaflet.mapInstances[0].fitBounds).toHaveBeenCalledOnce();
   });
 
+  it('should reuse existing map when coordinates change while visible', async () => {
+    const fixture = TestBed.createComponent(TourMapComponent);
+    fixture.componentRef.setInput('fromLat', 48.2082);
+    fixture.componentRef.setInput('fromLng', 16.3738);
+    fixture.componentRef.setInput('toLat', 52.52);
+    fixture.componentRef.setInput('toLng', 13.405);
+    fixture.detectChanges();
+
+    const toggle = fixture.nativeElement.querySelector('.map-toggle') as HTMLButtonElement;
+    toggle.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(leaflet.map).toHaveBeenCalledOnce();
+
+    fixture.componentRef.setInput('toLat', 47.0707);
+    fixture.componentRef.setInput('toLng', 15.4395);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(leaflet.map).toHaveBeenCalledOnce();
+    expect(leaflet.marker).toHaveBeenCalledTimes(4);
+  });
+
   it('should clear the layer and skip drawing when coordinates are incomplete', async () => {
     const fixture = TestBed.createComponent(TourMapComponent);
     fixture.componentRef.setInput('fromLat', 48.2082);
