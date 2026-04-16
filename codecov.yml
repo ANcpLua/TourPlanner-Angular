@@ -16,19 +16,26 @@ coverage:
 flags:
   angular:
     paths:
-      - src/app/
+      - frontend/src/app/
     carryforward: true
   dotnet:
     paths:
-      - API/
-      - BL/
-      - DAL/
-      - Contracts/
+      - backend/API/
+      - backend/BL/
+      - backend/DAL/
+      - backend/Contracts/
     carryforward: true
 
+fixes:
+  - "src/app/::frontend/src/app/"
+  - "API/::backend/API/"
+  - "BL/::backend/BL/"
+  - "DAL/::backend/DAL/"
+  - "Contracts/::backend/Contracts/"
+
 ignore:
-  - "src/app/app.config.ts"
-  - "src/app/app.routes.ts"
-  - "src/app/core/api/generated/**"
-  - "src/app/**/models/**"
-  - "src/app/features/tours/components/tour-map.component.ts"
+  - "frontend/src/app/app.config.ts"
+  - "frontend/src/app/app.routes.ts"
+  - "frontend/src/app/core/api/generated/**"
+  - "frontend/src/app/**/models/**"
+  - "frontend/src/app/features/tours/components/tour-map.component.ts"
