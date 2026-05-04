@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS api-build
+FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:8a90a473da5205a16979de99d2fc20975e922c68304f5c79d564e666dc3982fc AS api-build
 WORKDIR /src
 
 COPY backend/Directory.Packages.props backend/Directory.Build.props backend/Version.props backend/global.json ./
@@ -16,7 +16,7 @@ COPY backend/Contracts/ Contracts/
 
 RUN dotnet publish "API/API.csproj" -c Release -o /app/api/publish
 
-FROM node:22-alpine AS ui-build
+FROM node:22-alpine@sha256:8ea2348b068a9544dae7317b4f3aafcdc032df1647bb7d768a05a5cad1a7683f AS ui-build
 WORKDIR /app
 
 COPY frontend/package.json frontend/package-lock.json ./
@@ -28,7 +28,7 @@ COPY frontend/angular.json frontend/tsconfig.json frontend/tsconfig.app.json ./
 
 RUN npx ng build --configuration production
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS api
+FROM mcr.microsoft.com/dotnet/aspnet:10.0@sha256:55e37c7795bfaf6b9cc5d77c155811d9569f529d86e20647704bc1d7dd9741d4 AS api
 WORKDIR /app
 
 COPY --from=api-build /app/api/publish ./
@@ -38,7 +38,7 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 
 ENTRYPOINT ["dotnet", "API.dll"]
 
-FROM nginx:alpine AS ui
+FROM nginx:alpine@sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de AS ui
 WORKDIR /usr/share/nginx/html
 
 COPY --from=ui-build /app/dist/swen2-tourplanner-angular/browser ./
