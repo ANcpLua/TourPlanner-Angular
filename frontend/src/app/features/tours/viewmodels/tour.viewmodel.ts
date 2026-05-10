@@ -14,20 +14,27 @@ export class TourViewModel {
   private readonly toursApi = inject(ToursApiService);
 
   private readonly _tours = signal<readonly Tour[]>([]);
+  private readonly _selectedTourId = signal<string | null>(null);
+  private readonly _isLoading = signal(false);
+  private readonly _isSaving = signal(false);
+  private readonly _errorMessage = signal<string | null>(null);
+  private readonly _isFormVisible = signal(false);
+  private readonly _editingTourId = signal<string | null>(null);
+
   readonly tours = this._tours.asReadonly();
-  readonly selectedTourId = signal<string | null>(null);
-  readonly isLoading = signal(false);
-  readonly isSaving = signal(false);
-  readonly errorMessage = signal<string | null>(null);
-  readonly isFormVisible = signal(false);
-  readonly editingTourId = signal<string | null>(null);
+  readonly selectedTourId = this._selectedTourId.asReadonly();
+  readonly isLoading = this._isLoading.asReadonly();
+  readonly isSaving = this._isSaving.asReadonly();
+  readonly errorMessage = this._errorMessage.asReadonly();
+  readonly isFormVisible = this._isFormVisible.asReadonly();
+  readonly editingTourId = this._editingTourId.asReadonly();
 
   readonly selectedTour = computed(
-    () => this.tours().find((t) => t.id === this.selectedTourId()) ?? null,
+    () => this._tours().find((t) => t.id === this._selectedTourId()) ?? null,
   );
 
   readonly editingTour = computed(
-    () => this.tours().find((t) => t.id === this.editingTourId()) ?? null,
+    () => this._tours().find((t) => t.id === this._editingTourId()) ?? null,
   );
 
   readonly mapCoordinates = computed(() => {
@@ -54,51 +61,51 @@ export class TourViewModel {
   });
 
   async loadTours(): Promise<void> {
-    this.isLoading.set(true);
-    this.errorMessage.set(null);
+    this._isLoading.set(true);
+    this._errorMessage.set(null);
 
     try {
       const tours = await firstValueFrom(this.toursApi.getTours());
       this._tours.set(tours);
 
-      const currentSelection = this.selectedTourId();
+      const currentSelection = this._selectedTourId();
       const hasSelection = tours.some((t) => t.id === currentSelection);
       const nextSelection =
         hasSelection || tours.length === 0 ? currentSelection : tours[0].id;
 
-      this.selectedTourId.set(nextSelection);
+      this._selectedTourId.set(nextSelection);
     } catch {
-      this.errorMessage.set(
+      this._errorMessage.set(
         'Could not load tours from the backend. Check whether the API is running.',
       );
     } finally {
-      this.isLoading.set(false);
+      this._isLoading.set(false);
     }
   }
 
   selectTour(tour: Tour): void {
-    this.selectedTourId.set(tour.id);
+    this._selectedTourId.set(tour.id);
   }
 
   openCreateForm(): void {
-    this.editingTourId.set(null);
-    this.isFormVisible.set(true);
+    this._editingTourId.set(null);
+    this._isFormVisible.set(true);
   }
 
   openEditForm(tour: Tour): void {
-    this.selectedTourId.set(tour.id);
-    this.editingTourId.set(tour.id);
-    this.isFormVisible.set(true);
+    this._selectedTourId.set(tour.id);
+    this._editingTourId.set(tour.id);
+    this._isFormVisible.set(true);
   }
 
   closeForm(): void {
-    this.isFormVisible.set(false);
-    this.editingTourId.set(null);
+    this._isFormVisible.set(false);
+    this._editingTourId.set(null);
   }
 
   async saveTour(formValue: TourFormValue): Promise<void> {
-    this.isSaving.set(true);
-    this.errorMessage.set(null);
+    this._isSaving.set(true);
+    this._errorMessage.set(null);
 
     try {
       const preparedTour = await this.prepareTourForSave(formValue);
@@ -107,29 +114,29 @@ export class TourViewModel {
         : await firstValueFrom(this.toursApi.createTour(preparedTour));
 
       await this.loadTours();
-      this.selectedTourId.set(savedTour.id);
+      this._selectedTourId.set(savedTour.id);
       this.closeForm();
     } catch {
-      this.errorMessage.set(
+      this._errorMessage.set(
         'Could not save the tour. Check the selected route data and backend connectivity.',
       );
     } finally {
-      this.isSaving.set(false);
+      this._isSaving.set(false);
     }
   }
 
   async deleteTour(tour: Tour): Promise<void> {
-    this.errorMessage.set(null);
+    this._errorMessage.set(null);
 
     try {
       await firstValueFrom(this.toursApi.deleteTour(tour.id));
       await this.loadTours();
 
-      if (this.selectedTourId() === tour.id) {
-        this.selectedTourId.set(this.tours()[0]?.id ?? null);
+      if (this._selectedTourId() === tour.id) {
+        this._selectedTourId.set(this._tours()[0]?.id ?? null);
       }
     } catch {
-      this.errorMessage.set('Could not delete the selected tour.');
+      this._errorMessage.set('Could not delete the selected tour.');
     }
   }
 
