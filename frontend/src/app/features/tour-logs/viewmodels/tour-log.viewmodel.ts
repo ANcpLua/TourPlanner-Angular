@@ -14,74 +14,83 @@ export class TourLogViewModel {
   private readonly toursApi = inject(ToursApiService);
   private readonly logsApi = inject(TourLogsApiService);
 
-  readonly tours = signal<readonly Tour[]>([]);
-  readonly selectedTourId = signal<string | null>(null);
-  readonly logs = signal<readonly TourLog[]>([]);
-  readonly isLoading = signal(false);
-  readonly isSaving = signal(false);
-  readonly errorMessage = signal<string | null>(null);
-  readonly isFormVisible = signal(false);
-  readonly editingLogId = signal<string | null>(null);
+  private readonly _tours = signal<readonly Tour[]>([]);
+  private readonly _selectedTourId = signal<string | null>(null);
+  private readonly _logs = signal<readonly TourLog[]>([]);
+  private readonly _isLoading = signal(false);
+  private readonly _isSaving = signal(false);
+  private readonly _errorMessage = signal<string | null>(null);
+  private readonly _isFormVisible = signal(false);
+  private readonly _editingLogId = signal<string | null>(null);
+
+  readonly tours = this._tours.asReadonly();
+  readonly selectedTourId = this._selectedTourId.asReadonly();
+  readonly logs = this._logs.asReadonly();
+  readonly isLoading = this._isLoading.asReadonly();
+  readonly isSaving = this._isSaving.asReadonly();
+  readonly errorMessage = this._errorMessage.asReadonly();
+  readonly isFormVisible = this._isFormVisible.asReadonly();
+  readonly editingLogId = this._editingLogId.asReadonly();
 
   readonly editingLog = computed(
-    () => this.logs().find((l) => l.id === this.editingLogId()) ?? null,
+    () => this._logs().find((l) => l.id === this._editingLogId()) ?? null,
   );
 
   async loadTours(): Promise<void> {
     try {
       const tours = await firstValueFrom(this.toursApi.getTours());
-      this.tours.set(tours);
+      this._tours.set(tours);
     } catch {
-      this.errorMessage.set('Could not load tours.');
+      this._errorMessage.set('Could not load tours.');
     }
   }
 
   async selectTour(tourId: string | null): Promise<void> {
-    this.selectedTourId.set(tourId);
+    this._selectedTourId.set(tourId);
     this.closeForm();
 
     if (tourId) {
       await this.loadLogs();
     } else {
-      this.logs.set([]);
+      this._logs.set([]);
     }
   }
 
   async loadLogs(): Promise<void> {
-    const tourId = this.selectedTourId();
+    const tourId = this._selectedTourId();
     if (!tourId) return;
 
-    this.isLoading.set(true);
-    this.errorMessage.set(null);
+    this._isLoading.set(true);
+    this._errorMessage.set(null);
 
     try {
       const logs = await firstValueFrom(this.logsApi.getLogsByTour(tourId));
-      this.logs.set(logs);
+      this._logs.set(logs);
     } catch {
-      this.errorMessage.set('Could not load tour logs.');
+      this._errorMessage.set('Could not load tour logs.');
     } finally {
-      this.isLoading.set(false);
+      this._isLoading.set(false);
     }
   }
 
   openCreateForm(): void {
-    this.editingLogId.set(null);
-    this.isFormVisible.set(true);
+    this._editingLogId.set(null);
+    this._isFormVisible.set(true);
   }
 
   openEditForm(log: TourLog): void {
-    this.editingLogId.set(log.id);
-    this.isFormVisible.set(true);
+    this._editingLogId.set(log.id);
+    this._isFormVisible.set(true);
   }
 
   closeForm(): void {
-    this.isFormVisible.set(false);
-    this.editingLogId.set(null);
+    this._isFormVisible.set(false);
+    this._editingLogId.set(null);
   }
 
   async saveLog(formValue: TourLogFormValue): Promise<void> {
-    this.isSaving.set(true);
-    this.errorMessage.set(null);
+    this._isSaving.set(true);
+    this._errorMessage.set(null);
 
     try {
       const prepared = buildTourLogForSave(formValue);
@@ -94,20 +103,20 @@ export class TourLogViewModel {
       await this.loadLogs();
       this.closeForm();
     } catch {
-      this.errorMessage.set('Could not save the tour log.');
+      this._errorMessage.set('Could not save the tour log.');
     } finally {
-      this.isSaving.set(false);
+      this._isSaving.set(false);
     }
   }
 
   async deleteLog(log: TourLog): Promise<void> {
-    this.errorMessage.set(null);
+    this._errorMessage.set(null);
 
     try {
       await firstValueFrom(this.logsApi.deleteLog(log.id));
       await this.loadLogs();
     } catch {
-      this.errorMessage.set('Could not delete the log.');
+      this._errorMessage.set('Could not delete the log.');
     }
   }
 }

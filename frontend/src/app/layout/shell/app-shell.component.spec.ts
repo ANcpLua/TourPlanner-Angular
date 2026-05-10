@@ -19,6 +19,9 @@ describe('AppShellComponent', () => {
       searchText: vi.fn(() => ''),
       results: vi.fn(() => []),
       hasSearched: vi.fn(() => false),
+      isLoading: vi.fn(() => false),
+      errorMessage: vi.fn(() => null),
+      setSearchText: vi.fn(),
       search: vi.fn(),
       clear: vi.fn(),
       navigateToTour: vi.fn(),
@@ -115,10 +118,8 @@ describe('AppShellComponent', () => {
     expect(searchVm['navigateToTour']).toHaveBeenCalledWith(tour);
   });
 
-  it('should update searchVm.searchText when searchTextChange is emitted', () => {
+  it('should call setSearchText when searchTextChange is emitted', () => {
     authState['isAuthenticated'].mockReturnValue(true);
-    const setText = vi.fn();
-    Object.assign(searchVm['searchText'], { set: setText });
 
     const fixture = TestBed.createComponent(AppShellComponent);
     fixture.detectChanges();
@@ -127,6 +128,6 @@ describe('AppShellComponent', () => {
     input.value = 'Paris';
     input.dispatchEvent(new Event('input', { bubbles: true }));
 
-    expect(setText).toHaveBeenCalledWith('Paris');
+    expect(searchVm['setSearchText']).toHaveBeenCalledWith('Paris');
   });
 });

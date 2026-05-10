@@ -18,95 +18,101 @@ export class ReportViewModel {
   private readonly toursApi = inject(ToursApiService);
   private readonly reportsApi = inject(ReportsApiService);
 
-  readonly tours = signal<readonly Tour[]>([]);
-  readonly selectedTourId = signal<string | null>(null);
-  readonly isProcessing = signal(false);
-  readonly errorMessage = signal<string | null>(null);
-  readonly successMessage = signal<string | null>(null);
+  private readonly _tours = signal<readonly Tour[]>([]);
+  private readonly _selectedTourId = signal<string | null>(null);
+  private readonly _isProcessing = signal(false);
+  private readonly _errorMessage = signal<string | null>(null);
+  private readonly _successMessage = signal<string | null>(null);
+
+  readonly tours = this._tours.asReadonly();
+  readonly selectedTourId = this._selectedTourId.asReadonly();
+  readonly isProcessing = this._isProcessing.asReadonly();
+  readonly errorMessage = this._errorMessage.asReadonly();
+  readonly successMessage = this._successMessage.asReadonly();
 
   async loadTours(): Promise<void> {
     try {
       const tours = await firstValueFrom(this.toursApi.getTours());
-      this.tours.set(tours);
+      this._tours.set(tours);
     } catch {
-      this.errorMessage.set('Could not load tours.');
+      this._errorMessage.set('Could not load tours.');
     }
   }
 
   selectTour(tourId: string | null): void {
-    this.selectedTourId.set(tourId);
+    this._selectedTourId.set(tourId);
   }
 
   async generateSummaryReport(): Promise<void> {
-    this.isProcessing.set(true);
+    this._isProcessing.set(true);
     this.clearMessages();
 
     try {
       const blob = await firstValueFrom(this.reportsApi.getSummaryReport());
       triggerDownload(blob, 'SummaryReport.pdf');
-      this.successMessage.set('Summary report downloaded.');
+      this._successMessage.set('Summary report downloaded.');
     } catch {
-      this.errorMessage.set('Could not generate summary report.');
+      this._errorMessage.set('Could not generate summary report.');
     } finally {
-      this.isProcessing.set(false);
+      this._isProcessing.set(false);
     }
   }
 
   async generateTourReport(): Promise<void> {
-    const tourId = this.selectedTourId();
+    const tourId = this._selectedTourId();
     if (!tourId) return;
 
-    this.isProcessing.set(true);
+    this._isProcessing.set(true);
     this.clearMessages();
 
     try {
       const blob = await firstValueFrom(this.reportsApi.getTourReport(tourId));
       triggerDownload(blob, `TourReport_${tourId}.pdf`);
-      this.successMessage.set('Tour report downloaded.');
+      this._successMessage.set('Tour report downloaded.');
     } catch {
-      this.errorMessage.set('Could not generate tour report.');
+      this._errorMessage.set('Could not generate tour report.');
     } finally {
-      this.isProcessing.set(false);
+      this._isProcessing.set(false);
     }
   }
 
   async exportTour(): Promise<void> {
-    const tourId = this.selectedTourId();
+    const tourId = this._selectedTourId();
     if (!tourId) return;
 
-    this.isProcessing.set(true);
+    this._isProcessing.set(true);
     this.clearMessages();
 
     try {
       const json = await firstValueFrom(this.reportsApi.exportTour(tourId));
       const blob = new Blob([json], { type: 'application/json' });
       triggerDownload(blob, `TourExport_${tourId}.json`);
-      this.successMessage.set('Tour exported.');
+      this._successMessage.set('Tour exported.');
     } catch {
-      this.errorMessage.set('Could not export tour.');
+      this._errorMessage.set('Could not export tour.');
     } finally {
-      this.isProcessing.set(false);
+      this._isProcessing.set(false);
     }
   }
 
   async importTour(file: File): Promise<void> {
-    this.isProcessing.set(true);
+    this._isProcessing.set(true);
     this.clearMessages();
 
     try {
       const json = await file.text();
       await firstValueFrom(this.reportsApi.importTour(json));
       await this.loadTours();
-      this.successMessage.set('Tour imported successfully.');
+      this._successMessage.set('Tour imported successfully.');
     } catch {
-      this.errorMessage.set('Could not import tour. Check the file format.');
+      this._errorMessage.set('Could not import tour. Check the file format.');
     } finally {
-      this.isProcessing.set(false);
+      this._isProcessing.set(false);
     }
   }
 
   private clearMessages(): void {
-    this.errorMessage.set(null);
-    this.successMessage.set(null);
+    this._errorMessage.set(null);
+    this._successMessage.set(null);
   }
 }

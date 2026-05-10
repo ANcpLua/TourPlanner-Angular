@@ -7,7 +7,7 @@
         [searchText]="searchVm.searchText()"
         [results]="searchVm.results()"
         [hasSearched]="searchVm.hasSearched()"
-        (searchTextChange)="searchVm.searchText.set($event)"
+        (searchTextChange)="searchVm.setSearchText($event)"
         (search)="searchVm.search()"
         (clear)="searchVm.clear()"
         (navigateToTour)="searchVm.navigateToTour($event)"
