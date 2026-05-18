@@ -20,7 +20,7 @@
   },
   "packageManager": "npm@11.14.1",
   "dependencies": {
-    "@angular/aria": "21.2.10",
+    "@angular/aria": "21.2.11",
     "@angular/cdk": "21.2.11",
     "@angular/common": "21.2.13",
     "@angular/compiler": "21.2.13",
