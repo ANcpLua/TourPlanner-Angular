@@ -16,7 +16,7 @@ COPY backend/Contracts/ Contracts/
 
 RUN dotnet publish "API/API.csproj" -c Release -o /app/api/publish
 
-FROM node:24-alpine@sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14 AS ui-build
+FROM node:24-alpine@sha256:156b55f92e98ccd5ef49578a8cea0df4679826564bad1c9d4ef04462b9f0ded6 AS ui-build
 WORKDIR /app
 
 COPY frontend/package.json frontend/package-lock.json ./
