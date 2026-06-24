@@ -38,7 +38,7 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 
 ENTRYPOINT ["dotnet", "API.dll"]
 
-FROM nginx:alpine@sha256:8b1e78743a03dbb2c95171cc58639fef29abc8816598e27fb910ed2e621e589a AS ui
+FROM nginx:alpine@sha256:1a8724a52d432501548a8d8681bb1554c2d09778f8b9ed0882fc3442549980b7 AS ui
 WORKDIR /usr/share/nginx/html
 
 COPY --from=ui-build /app/dist/swen2-tourplanner-angular/browser ./
