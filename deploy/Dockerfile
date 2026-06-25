@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:c0790639332692a0d56cdd81ed581cfd24d040d9839764c138994866df89a3b6 AS api-build
+FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:ea8bde36c11b6e7eec2656d0e59101d4462f6bd630730f2c8201ed0572b295d5 AS api-build
 WORKDIR /src
 
 COPY backend/Directory.Packages.props backend/Directory.Build.props backend/Version.props backend/global.json ./
@@ -28,7 +28,7 @@ COPY frontend/angular.json frontend/tsconfig.json frontend/tsconfig.app.json ./
 
 RUN npx ng build --configuration production
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0@sha256:8c0b6857eab7b2aa57884c839bf4678414606bd7d17370f18a842ac5cf414711 AS api
+FROM mcr.microsoft.com/dotnet/aspnet:10.0@sha256:7644f992230d35cf230017189d4038c0ae0f7388b13f4f7ae1900a155bafb597 AS api
 WORKDIR /app
 
 COPY --from=api-build /app/api/publish ./
