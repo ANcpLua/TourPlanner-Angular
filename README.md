@@ -92,7 +92,7 @@ Open http://localhost:7226.
 
 ## Tests
 
-**429 tests total -- 170 backend (NUnit) + 259 frontend (Vitest), all passing.**
+**433 tests total -- 165 backend (NUnit) + 268 frontend (Vitest), all passing.**
 
 Backend (from `backend/`):
 

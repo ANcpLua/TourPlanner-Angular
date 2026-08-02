@@ -19,7 +19,7 @@
         <MicrosoftAspNetCoreOpenApiVersion>10.0.5</MicrosoftAspNetCoreOpenApiVersion>
         <MicrosoftOpenApiVersion>2.11.0</MicrosoftOpenApiVersion>
         <MicrosoftExtensionsApiDescriptionServerVersion>10.0.5</MicrosoftExtensionsApiDescriptionServerVersion>
-        <MicrosoftExtensionsConfigurationAbstractionsVersion>10.0.5</MicrosoftExtensionsConfigurationAbstractionsVersion>
+        <MicrosoftExtensionsConfigurationAbstractionsVersion>10.0.10</MicrosoftExtensionsConfigurationAbstractionsVersion>
         <MicrosoftExtensionsHttpVersion>10.0.5</MicrosoftExtensionsHttpVersion>
 
         <!-- Serilog -->

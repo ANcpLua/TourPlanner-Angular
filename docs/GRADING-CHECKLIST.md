@@ -19,7 +19,7 @@ Legend: ✅ done · ⚠️ partial / spec mismatch · ❌ missing (student owns)
 | 7 | OpenRouteService integration | ✅ | `DAL/Adapter/OpenRouteServiceRepository.cs` (see feature #4 for the geometry gap) |
 | 8 | Leaflet integration | ✅ | `frontend/src/app/features/tours/components/tour-map.component.ts` — now draws the real ORS route geometry as a Leaflet polyline (2026-04-13 fix) |
 | 9 | Logging framework | ✅ | Serilog (accepted as "another .NET Microsoft.Extensions-Solution" per the spec) |
-| 10 | ≥ 20 unit tests | ✅ | **170 C# tests** (NUnit) + **259 Angular specs** (Vitest) |
+| 10 | ≥ 20 unit tests | ✅ | **165 C# tests** (NUnit) + **268 Angular specs** (Vitest) |
 
 ---
 
@@ -34,7 +34,7 @@ Legend: ✅ done · ⚠️ partial / spec mismatch · ❌ missing (student owns)
 | G5 | Design patterns in code | ✅ | See must-have #4 |
 | G6 | Own reusable web-UI component | ✅ | `src/app/features/search/components/search.component.ts` — used in `app-shell.component.html`, pure `input()`/`output()` |
 | G7 | Tour + log data in Postgres via ORM | ✅ | `TourPersistence`, `TourLogPersistence` |
-| G7b | Images on filesystem (not DB) | ✅ | `API/Images/tours/*.png`, served via `UseStaticFiles()` |
+| G7b | Images on filesystem (not DB) | ✅ | `API/Images/tours/*.png` are filesystem assets; tours persist only `ImagePath`, and `PdfReportService` reads the referenced files for PDF reports. The API does not serve images over HTTP. |
 | G8 | Logging framework | ✅ | See must-have #9 |
 | G9 | Unit tests | ✅ | See must-have #10 |
 | G10 | Config separated | ✅ | See must-have #6 |

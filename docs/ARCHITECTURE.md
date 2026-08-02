@@ -55,8 +55,8 @@
   - shared value types for transport only
 
 - `Tests`
-  - 170 backend tests (NUnit + Moq, integration tests with Testcontainers)
-  - 259 frontend tests (Vitest + Angular Testing Library)
+  - 165 backend tests (NUnit + Moq, EF Core InMemory repository tests, and WebApplicationFactory API coverage)
+  - 268 frontend tests (Vitest + Angular Testing Library)
 
 ## Rules
 

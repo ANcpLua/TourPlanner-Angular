@@ -16,7 +16,7 @@ Code must be pure functions, cohesive, loosely coupled, and expressive. 100% per
 - **BL**: Business rules, orchestration, domain models
 - **DAL**: Persistence (EF Core + PostgreSQL), external services (OpenRouteService)
 - **Contracts**: Shared DTOs between API and frontend
-- **Tests**: NUnit + Moq, integration tests with real PostgreSQL
+- **Tests**: NUnit + Moq, EF Core InMemory repository tests and WebApplicationFactory API coverage
 - **Angular**: Components, ViewModels, services, routing
 
 ## Architecture Guardrails
@@ -67,8 +67,8 @@ Code must be pure functions, cohesive, loosely coupled, and expressive. 100% per
 ## Testing
 
 - **framework**: Vitest 4 via Angular CLI (`npx ng test`)
-- **angular-tests**: 259 tests, 29 files
-- **dotnet-tests**: NUnit + Moq, 170 tests, integration tests with real PostgreSQL via Testcontainers
+- **angular-tests**: 268 tests, 29 files
+- **dotnet-tests**: NUnit + Moq, 165 tests, with EF Core InMemory repository tests and WebApplicationFactory API coverage
 - **coverage-target**: 95%+ per flag
 - **vm-tests**: TestBed + HttpTestingController + provideHttpClientTesting
 - **component-tests**: `fixture.componentRef.setInput()` for signal inputs
