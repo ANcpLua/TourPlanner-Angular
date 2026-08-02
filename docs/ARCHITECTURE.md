@@ -4,7 +4,7 @@
 
 ```
 .
-├── backend/    C# solution (API, BL, DAL, Contracts, Tests)
+├── backend/    C# solution (API, BL, DAL, Contracts, XML generator, Tests)
 ├── frontend/   Angular 21 workspace
 ├── deploy/     Docker, compose, nginx
 └── docs/       Architecture, grading checklist, wireframes
@@ -17,6 +17,7 @@
 - `BL` -- business logic, domain models, Mapster, QuestPDF
 - `DAL` -- EF Core + PostgreSQL, Identity, OpenRouteService adapter
 - `Contracts` -- shared DTOs between API and frontend
+- `TourPlanner.XmlGenerator` -- compile-time XML writer generation for report contracts
 - `Tests` -- NUnit + Moq (backend), Vitest (frontend)
 
 ## Ownership
@@ -31,6 +32,7 @@
 - `API`
   - HTTP endpoints and controllers
   - request validation at transport boundary
+  - strict XML import parsing and domain/XML mapping
   - OpenAPI document generation
   - ASP.NET Identity cookie authentication
   - CORS, health checks, AOP logging
@@ -39,7 +41,6 @@
   - business rules and use-case orchestration
   - domain models (TourDomain, TourLogDomain)
   - PDF report generation
-  - import/export logic
   - mapping configuration
 
 - `DAL`
@@ -50,6 +51,7 @@
 
 - `Contracts`
   - DTOs and request/response models
+  - generated XML report document contract
   - shared value types for transport only
 
 - `Tests`

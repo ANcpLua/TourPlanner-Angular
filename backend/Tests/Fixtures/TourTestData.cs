@@ -109,13 +109,18 @@ public static class TourTestData
         ];
     }
 
-    public static string SampleTourJson()
-    {
-        return JsonSerializer.Serialize(SampleTourDto());
-    }
-
-    public static string SampleTourDomainJson()
-    {
-        return JsonSerializer.Serialize(SampleTourDomain());
-    }
+    public static string SampleTourXml() =>
+        """
+        <tour>
+          <name>Imported Tour</name>
+          <description>Imported from XML</description>
+          <from>Vienna</from>
+          <to>Berlin</to>
+          <imagePath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+          <routeInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+          <distance>680.5</distance>
+          <estimatedTime>420</estimatedTime>
+          <transportType>Car</transportType>
+        </tour>
+        """;
 }

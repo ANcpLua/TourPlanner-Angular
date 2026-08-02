@@ -113,7 +113,7 @@ describe('ReportsPageComponent', () => {
 
     expect(labels).toContain('Download Summary PDF');
     expect(labels).toContain('Download Tour PDF');
-    expect(labels).toContain('Export as JSON');
+    expect(labels).toContain('Export as XML');
   });
 
   it('should call vm.selectTour when a tour is selected from dropdown', () => {
@@ -176,7 +176,7 @@ describe('ReportsPageComponent', () => {
 
     const buttons = fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>;
     const tourPdfBtn = Array.from(buttons).find((b) => b.textContent!.includes('Download Tour PDF'))!;
-    const exportBtn = Array.from(buttons).find((b) => b.textContent!.includes('Export as JSON'))!;
+    const exportBtn = Array.from(buttons).find((b) => b.textContent!.includes('Export as XML'))!;
 
     expect(tourPdfBtn.disabled).toBe(true);
     expect(exportBtn.disabled).toBe(true);
@@ -190,7 +190,7 @@ describe('ReportsPageComponent', () => {
 
     const buttons = fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>;
     const tourPdfBtn = Array.from(buttons).find((b) => b.textContent!.includes('Download Tour PDF'))!;
-    const exportBtn = Array.from(buttons).find((b) => b.textContent!.includes('Export as JSON'))!;
+    const exportBtn = Array.from(buttons).find((b) => b.textContent!.includes('Export as XML'))!;
 
     expect(tourPdfBtn.disabled).toBe(false);
     expect(exportBtn.disabled).toBe(false);
@@ -212,7 +212,7 @@ describe('ReportsPageComponent', () => {
     const fixture = TestBed.createComponent(ReportsPageComponent);
     fixture.detectChanges();
 
-    const file = new File(['{}'], 'tour.json', { type: 'application/json' });
+    const file = new File(['<tour />'], 'tour.xml', { type: 'application/xml' });
     const input = fixture.nativeElement.querySelector('input[type="file"]') as HTMLInputElement;
 
     // jsdom lacks DataTransfer — set files via defineProperty
@@ -237,7 +237,7 @@ describe('ReportsPageComponent', () => {
     const fixture = TestBed.createComponent(ReportsPageComponent);
     fixture.detectChanges();
 
-    const file = new File(['{}'], 'tour.json', { type: 'application/json' });
+    const file = new File(['<tour />'], 'tour.xml', { type: 'application/xml' });
     const input = fixture.nativeElement.querySelector('input[type="file"]') as HTMLInputElement;
 
     Object.defineProperty(input, 'files', { value: [file], writable: true });

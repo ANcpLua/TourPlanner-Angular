@@ -152,18 +152,20 @@ describe('ReportViewModel', () => {
     expect(vm.isProcessing()).toBe(false);
   });
 
-  it('should download JSON blob and set success message on exportTour', async () => {
+  it('should download XML blob and set success message on exportTour', async () => {
     vm.selectTour('tour-1');
     const promise = vm.exportTour();
 
     httpTesting
       .expectOne(`${baseUrl}api/reports/export/tour-1`)
-      .flush('{"id":"tour-1"}', { headers: { 'Content-Type': 'text/plain' } });
+      .flush('<tour><name>Tour 1</name></tour>', {
+        headers: { 'Content-Type': 'application/xml' },
+      });
     await promise;
 
     expect(URL.createObjectURL).toHaveBeenCalledOnce();
     expect(anchorClickSpy).toHaveBeenCalledOnce();
-    expect(anchorStub.download).toBe('TourExport_tour-1.json');
+    expect(anchorStub.download).toBe('TourExport_tour-1.xml');
     expect(vm.successMessage()).toBe('Tour exported.');
     expect(vm.isProcessing()).toBe(false);
   });
@@ -182,7 +184,9 @@ describe('ReportViewModel', () => {
   // importTour -------------------------------------------------------------------
 
   it('should import file, reload tours, and set success message', async () => {
-    const file = { text: vi.fn().mockResolvedValue('{"id":"tour-1"}') } as unknown as File;
+    const file = {
+      text: vi.fn().mockResolvedValue('<tour><name>Tour 1</name></tour>'),
+    } as unknown as File;
     const promise = vm.importTour(file);
 
     // Drain the file.text() microtask so the POST is queued.
@@ -200,7 +204,7 @@ describe('ReportViewModel', () => {
   });
 
   it('should set error on import failure', async () => {
-    const file = { text: vi.fn().mockResolvedValue('bad json') } as unknown as File;
+    const file = { text: vi.fn().mockResolvedValue('bad xml') } as unknown as File;
     const promise = vm.importTour(file);
 
     await file.text();

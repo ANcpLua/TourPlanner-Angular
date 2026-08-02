@@ -58,20 +58,20 @@
           [disabled]="!vm.selectedTourId() || vm.isProcessing()"
           (click)="vm.exportTour()"
         >
-          Export as JSON
+          Export as XML
         </button>
       </div>
     </section>
 
     <section class="reports-page__card">
       <h2>Import Tour</h2>
-      <p>Import a tour from a previously exported JSON file.</p>
+      <p>Import a tour from a previously exported XML file.</p>
 
       <label class="reports-page__file-input">
-        <span>{{ vm.isProcessing() ? 'Importing…' : 'Choose JSON File' }}</span>
+        <span>{{ vm.isProcessing() ? 'Importing…' : 'Choose XML File' }}</span>
         <input
           type="file"
-          accept=".json"
+          accept=".xml,application/xml,text/xml"
           [disabled]="vm.isProcessing()"
           (change)="onFileSelected($event)"
         />

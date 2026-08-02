@@ -9,7 +9,7 @@ SWEN2 2026 -- Tour planning application with .NET 10 backend and Angular 21 fron
 
 ```
 .
-├── backend/    C# solution (API, BL, DAL, Contracts, Tests) + sln + props + openapi output
+├── backend/    C# solution (API, BL, DAL, Contracts, XML generator, Tests) + sln + props + openapi output
 ├── frontend/   Angular 21 workspace (src, public, angular.json, package.json, tsconfig*)
 ├── deploy/     Docker, compose, nginx
 └── docs/       Grading checklist, layout proposal, architecture notes, wireframes

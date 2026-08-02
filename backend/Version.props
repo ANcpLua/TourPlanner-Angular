@@ -17,7 +17,7 @@
         <!-- ASP.NET Core 10 -->
         <MicrosoftAspNetCoreIdentityEntityFrameworkCoreVersion>10.0.5</MicrosoftAspNetCoreIdentityEntityFrameworkCoreVersion>
         <MicrosoftAspNetCoreOpenApiVersion>10.0.5</MicrosoftAspNetCoreOpenApiVersion>
-        <MicrosoftOpenApiVersion>2.7.1</MicrosoftOpenApiVersion>
+        <MicrosoftOpenApiVersion>2.11.0</MicrosoftOpenApiVersion>
         <MicrosoftExtensionsApiDescriptionServerVersion>10.0.5</MicrosoftExtensionsApiDescriptionServerVersion>
         <MicrosoftExtensionsConfigurationAbstractionsVersion>10.0.5</MicrosoftExtensionsConfigurationAbstractionsVersion>
         <MicrosoftExtensionsHttpVersion>10.0.5</MicrosoftExtensionsHttpVersion>
@@ -59,6 +59,8 @@
 
         <!-- Code Quality -->
         <ANcpLuaAnalyzersVersion>2.0.1</ANcpLuaAnalyzersVersion>
+        <MicrosoftCodeAnalysisAnalyzersVersion>5.6.0</MicrosoftCodeAnalysisAnalyzersVersion>
+        <MicrosoftCodeAnalysisCSharpVersion>5.6.0</MicrosoftCodeAnalysisCSharpVersion>
     </PropertyGroup>
 
 </Project>

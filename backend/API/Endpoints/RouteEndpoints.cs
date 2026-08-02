@@ -9,7 +9,8 @@ public static class RouteEndpoints
     public static IEndpointRouteBuilder MapRouteEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var routes = endpoints.MapGroup(ApiRoute.Routes.Path).WithTags(ApiTag.Routes);
-        routes.MapPost(ApiRoute.Routes.Resolve, ResolveRoute);
+        routes.MapPost(ApiRoute.Routes.Resolve, ResolveRoute)
+            .ProducesValidationProblem();
         return endpoints;
     }
 

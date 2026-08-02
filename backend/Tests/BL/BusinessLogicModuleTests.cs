@@ -31,7 +31,6 @@ public class BusinessLogicModuleTests
         var service = container.Resolve<IPdfReportService>();
         container.Resolve<ITourService>();
         container.Resolve<ITourLogService>();
-        container.Resolve<IFileService>();
 
         Assert.That(service, Is.Not.Null);
     }

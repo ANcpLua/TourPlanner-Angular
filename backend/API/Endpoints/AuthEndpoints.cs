@@ -10,8 +10,14 @@ public static class AuthEndpoints
     public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var auth = endpoints.MapGroup(ApiRoute.Auth.Path).WithTags(ApiTag.Auth);
-        auth.MapPost(ApiRoute.Auth.Register, RegisterAsync).AllowAnonymous();
-        auth.MapPost(ApiRoute.Auth.Login, LoginAsync).AllowAnonymous();
+        auth.MapPost(ApiRoute.Auth.Register, RegisterAsync)
+            .Produces<UserInfo>(StatusCodes.Status200OK)
+            .ProducesValidationProblem()
+            .AllowAnonymous();
+        auth.MapPost(ApiRoute.Auth.Login, LoginAsync)
+            .Produces<UserInfo>(StatusCodes.Status200OK)
+            .ProducesValidationProblem()
+            .AllowAnonymous();
         auth.MapPost(ApiRoute.Auth.Logout, LogoutAsync).RequireAuthorization();
         auth.MapGet(ApiRoute.Auth.Me, GetCurrentUser).RequireAuthorization();
         return endpoints;

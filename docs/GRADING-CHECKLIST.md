@@ -62,7 +62,7 @@ Legend: ✅ done · ⚠️ partial / spec mismatch · ❌ missing (student owns)
 | F14 | Computed **popularity** (from log count) | ✅ | `TourDomain.PopularityScore = Logs.Count`, `FormattedPopularity` switch expression |
 | F15 | Computed **child-friendliness** (from difficulty, total times, distance) | ✅ | `TourDomain.IsChildFriendly` now derives from the three signals the spec names: `Logs.Average(Difficulty) ≤ 2.0 && Logs.Average(TotalTime) ≤ 120 && Logs.Average(TotalDistance) ≤ 10`. Rating is no longer part of the formula. Thresholds are tunable and should be justified in the protocol. (2026-04-13 fix) |
 | F16 | Full-text search also considers computed values | ✅ | **Fixed 2026-04-13.** `SearchableText` now emits `FormattedPopularity`, `PopularityScore`, `"child-friendly"` token when true, and `AverageRating` formatted `F1`. Verified end-to-end via Playwright (8/8 search queries). |
-| F17 | Import + export of tour data | ✅ | `ReportEndpoints` POST `/api/reports/import`, GET `/api/reports/export/{tourId}` — JSON |
+| F17 | Import + export of tour data | ✅ | `ReportEndpoints` POST `/api/reports/import`, GET `/api/reports/export/{tourId}` — generated XML export and strict XML import |
 | F18 | Unique feature | ✅ | **PDF reports via QuestPDF** — `BL/Service/PdfReportService.cs` generates per-tour and summary reports with embedded images. UI: `reports-page.component.ts` |
 
 ---
@@ -102,4 +102,3 @@ Only the student-owned deliverables remain. All grading-critical **code** gaps a
    The sequence diagram for full-text search should reflect the current flow:
    `SearchComponent → SearchViewModel → ToursApiService.searchTours → TourController.SearchTours → TourService.SearchTours → TourRepository.GetAllTours → Mapster → TourDomain.SearchableText filter → IEnumerable<TourDomain> → Mapster → IEnumerable<TourDto>`.
    The class diagram should include the new `ResolvedRoute` record in `Contracts.Routes` and the `SearchableText` computed property on `TourDomain`.
-

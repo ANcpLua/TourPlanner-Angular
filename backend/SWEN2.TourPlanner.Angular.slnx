@@ -26,4 +26,5 @@
   <Project Path="Contracts/Contracts.csproj" />
   <Project Path="DAL/DAL.csproj" />
   <Project Path="Tests/Tests.csproj" />
+  <Project Path="TourPlanner.XmlGenerator/TourPlanner.XmlGenerator.csproj" />
 </Solution>

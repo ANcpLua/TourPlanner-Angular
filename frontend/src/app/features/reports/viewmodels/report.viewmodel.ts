@@ -84,9 +84,9 @@ export class ReportViewModel {
     this.clearMessages();
 
     try {
-      const json = await firstValueFrom(this.reportsApi.exportTour(tourId));
-      const blob = new Blob([json], { type: 'application/json' });
-      triggerDownload(blob, `TourExport_${tourId}.json`);
+      const xml = await firstValueFrom(this.reportsApi.exportTour(tourId));
+      const blob = new Blob([xml], { type: 'application/xml' });
+      triggerDownload(blob, `TourExport_${tourId}.xml`);
       this._successMessage.set('Tour exported.');
     } catch {
       this._errorMessage.set('Could not export tour.');
@@ -100,8 +100,8 @@ export class ReportViewModel {
     this.clearMessages();
 
     try {
-      const json = await file.text();
-      await firstValueFrom(this.reportsApi.importTour(json));
+      const xml = await file.text();
+      await firstValueFrom(this.reportsApi.importTour(xml));
       await this.loadTours();
       this._successMessage.set('Tour imported successfully.');
     } catch {

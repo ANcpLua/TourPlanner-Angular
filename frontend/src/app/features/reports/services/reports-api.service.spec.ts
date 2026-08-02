@@ -47,24 +47,26 @@ describe('ReportsApiService', () => {
   });
 
   it('should export tour as text', () => {
-    service.exportTour('tour-1').subscribe((json) => {
-      expect(json).toContain('City Walk');
+    service.exportTour('tour-1').subscribe((xml) => {
+      expect(xml).toContain('City Walk');
     });
 
     const req = httpTesting.expectOne(`${baseUrl}api/reports/export/tour-1`);
     expect(req.request.method).toBe('GET');
     expect(req.request.responseType).toBe('text');
-    req.flush('{"name":"City Walk"}');
+    expect(req.request.headers.get('Accept')).toBe('application/xml');
+    req.flush('<tour><name>City Walk</name></tour>');
   });
 
-  it('should import tour with json body', () => {
-    const json = '{"name":"Imported Tour"}';
+  it('should import tour with XML in a JSON envelope', () => {
+    const xml = '<tour><name>Imported Tour</name></tour>';
 
-    service.importTour(json).subscribe();
+    service.importTour(xml).subscribe();
 
     const req = httpTesting.expectOne(`${baseUrl}api/reports/import`);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toBe(json);
+    expect(req.request.body).toEqual({ xml });
+    expect(req.request.headers.get('Content-Type')).toBe('application/json');
     req.flush({ id: 'new-id', name: 'Imported Tour' });
   });
 });
